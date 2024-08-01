@@ -119,5 +119,5 @@ mydata_fct <- mydata_raw %>%
 
 
 
-
+basic_eda(mydata_fct)
 
