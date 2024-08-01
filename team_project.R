@@ -86,22 +86,8 @@ mydata_num <- mydata_raw %>%
            berlin.sleep.scale = Berlin.Sleepiness.Scale, SF36.PCS, SF36.MCS)
 
 # --------------------------------------------------------------------------------
-# Structuring as seperate dataset 
-# LEGEND FOR CATEGORICAL (FROM DATA DICTIONARY)
-#' gender <- 1 = M, 2 = F 
-#' Liver.Diagnosis <- Liver Diagnosis (1 = Hep C, 2 = Hep B, 3 = PSC/PBC/AHA, 
-#'    4 = alcohol, 5 = other NASH/Hepatoma, Biliary atresia, 
-#'    Tyrosenemia/congenital/neonatal/AAT/Wilsons, HCC, FHF, 
-#'    cryptogenic, Angiosarcoma/tumor)
-#' recurrence <- Recurrence of original disease process (1 = yes, 0 = no)
-#' rejection <- Evidence of rejection/graft dysfunction either 
-#'    as evidenced by pathology or by clinical judgement based on treating
-#'     hepatologist (1 = yes, 0 = no)
-#' Any.fibrosis <- Evidence of fibrosis grade A2 and higher (1 = yes, 0 = no)
-#' renal.failure <- Renal failure (1 = yes, 0 = no)
-#' depression <- Depression (1 = yes, 0 = no)
-#' steriod <- Corticosteroid (1 = yes, 0 = no)
-#' 
+
+
 mydata_raw$Gender_fctr <- ifelse(mydata_raw$Gender == "1", "F", "M")
 mydata_raw$Gender_fctr <- factor(mydata_raw$Gender_fctr) 
 
@@ -109,26 +95,28 @@ mydata_raw$Liver.Diagnosis_fctr <- ifelse(mydata_raw$Liver.Diagnosis == "1", "He
                                      ifelse(mydata_raw$Liver.Diagnosis == "2", "Hep B", 
                                             ifelse(mydata_raw$Liver.Diagnosis == "3", "PSC/PBC/AHA", 
                                                    ifelse(mydata_raw$Liver.Diagnosis == "4", "Alcohol", "Other"))))
-mydata_raw$Liver.Diagnosis_fctr <- factor(mydata_raw$Liver.Diagnosis, levels = c("Hep C", "Hep B", "PSC/PBC/AHA", "Alcohol", "Other")) 
+mydata_raw$Liver.Diagnosis_fctr <- factor(mydata_raw$Liver.Diagnosis_fctr, levels = c("Hep C", "Hep B", "PSC/PBC/AHA", "Alcohol", "Other")) 
 
-mydata_raw$Rejection.graft.dysfunction_fctr <- ifelse(mydata_raw$Rejection.graft.dysfunction 
-                                                 == "1", "Y", "N")
-mydata_raw$Rejection.graft.dysfunction_fctr  <- factor(mydata_raw$Rejection.graft.dysfunction) 
+mydata_raw$Rejection.graft.dysfunction_fctr <- factor(mydata_raw$Rejection.graft.dysfunction, levels = c(0, 1), labels = c("N", "Y")) 
 
-mydata_raw$Recurrence.of.disease_fctr <- ifelse(mydata_raw$Recurrence.of.disease 
-                                                      == "1", "Y", "N")
-mydata_raw$Recurrence.of.disease_fctr  <- factor(mydata_raw$Recurrence.of.disease) 
+mydata_raw$Recurrence.of.disease_fctr  <- factor(mydata_raw$Recurrence.of.disease, levels = c(0, 1), labels = c("N", "Y")) 
 
-mydata_raw$Any.fibrosis_fctr<- ifelse(mydata_raw$Any.fibrosis 
-                                                      == "1", "Y", "N")
-mydata_raw$Any.fibrosis_fctr  <- factor(mydata_raw$Any.fibrosis) 
+mydata_raw$Any.fibrosis_fctr  <- factor(mydata_raw$Any.fibrosis, levels = c(0, 1), labels = c("N", "Y")) 
 
-factoring <- function(data, column_name) {
-  factor_column <- ifelse(data[[column_name]] == "1", "Y", "N")
-  data[[paste0(column_name, "_fctr")]] <- factor(factor_column)
-}
+mydata_raw$Renal.Failure_fctr <- factor(mydata_raw$Renal.Failure, levels = c(0, 1), labels = c("N", "Y")) 
 
-factoring(mydata_raw, "Any.fibrosis")
+mydata_raw$Depression_fctr <- factor(mydata_raw$Depression, levels = c(0, 1), labels = c("N", "Y")) 
+
+mydata_raw$Corticoid_fctr <- factor(mydata_raw$Corticoid, levels = c(0, 1), labels = c("N", "Y")) 
+
+mydata_fct <- mydata_raw %>%
+  select(gender.fctr = Gender_fctr, age = Age, BMI, time.transplant = Time.from.transplant, 
+         liver.diagnosis.fctr = Liver.Diagnosis_fctr, disease.recurrence.fctr = Recurrence.of.disease_fctr, 
+         graft.rejection.dys.fctr = Rejection.graft.dysfunction_fctr, fibrosis.fctr = Any.fibrosis_fctr, renal.failure.fctr = Renal.Failure_fctr, 
+         depression.fctr = Depression_fctr, corticoid.fctr = Corticoid_fctr, epworth.sleep.scale = Epworth.Sleepiness.Scale, 
+         pittsburgh.quality.score = Pittsburgh.Sleep.Quality.Index.Score, athens.insomnia.scale = Athens.Insomnia.Scale, 
+         berlin.sleep.scale = Berlin.Sleepiness.Scale, SF36.PCS, SF36.MCS)
+
 
 
 
