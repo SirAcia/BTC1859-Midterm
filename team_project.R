@@ -122,3 +122,60 @@ mydata_fct <- mydata_raw %>%
 
 basic_eda(mydata_fct)
 
+# --------------------------------------------------------------------------------
+
+# PSQI estimate
+
+# Calculate the number of patients with poor sleep quality
+psqi_poor_sleep <- length(which(mydata_fct$pittsburgh.quality.score > 4))
+
+# Calculate the total number of observations
+total_psqi_observations <- length(which(!is.na(mydata_fct$pittsburgh.quality.score)))
+
+# Calculate the prevalence of sleep disturbance
+psqi_prevalence_poor_sleep <- psqi_poor_sleep / total_psqi_observations
+
+# Print the prevalence
+cat("PSQI Prevalence of Sleep Disturbance:", psqi_prevalence_poor_sleep, "\n")
+
+# ESS estimate
+
+# Calculate the number of patients with poor sleep quality
+ess_poor_sleep <- length(which(mydata_fct$epworth.sleep.scale > 10))
+
+# Calculate the total number of observations
+total_ess_observations <- length(which(!is.na(mydata_fct$epworth.sleep.scale)))
+
+# Calculate the prevalence of sleep disturbance
+ess_prevalence_poor_sleep <- ess_poor_sleep / total_ess_observations
+
+# Print the prevalence
+cat("ESS Prevalence of Sleep Disturbance:", ess_prevalence_poor_sleep, "\n")
+
+# BSS estimate
+
+# Calculate the number of patients with poor sleep quality
+bss_poor_sleep <- length(which(mydata_fct$berlin.sleep.scale == 1))
+
+# Calculate the total number of observations
+total_bss_observations <- length(which(!is.na(mydata_fct$berlin.sleep.scale)))
+
+# Calculate the prevalence of sleep disturbance
+bss_prevalence_poor_sleep <- bss_poor_sleep / total_bss_observations
+
+# Print the prevalence
+cat("BSS Prevalence of Sleep Disturbance:", bss_prevalence_poor_sleep, "\n")
+
+# AIS estimate
+
+# Calculate the number of patients with poor sleep quality
+ais_poor_sleep <- length(which(mydata_fct$athens.insomnia.scale > 5))
+
+# Calculate the total number of observations
+total_ais_observations <- length(which(!is.na(mydata_fct$athens.insomnia.scale)))
+
+# Calculate the prevalence of sleep disturbance
+ais_prevalence_poor_sleep <- ais_poor_sleep / total_ais_observations
+
+# Print the prevalence
+cat("AIS Prevalence of Sleep Disturbance:", ais_prevalence_poor_sleep, "\n")
