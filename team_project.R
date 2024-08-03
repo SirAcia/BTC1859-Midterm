@@ -1,6 +1,6 @@
 # Team project
 
-data <- read.csv("./project_data.csv")
+mydata <- read.csv("./project_data.csv")
 
 # It is perceived that patients with liver transplant have problems with sleep. 
 # In addition, it is hypothesized that sleep disturbance has a direct effect on Quality of Life. 
@@ -20,6 +20,7 @@ mydata_raw <- subset(mydata, , c("Gender", "Age", "BMI", "Time.from.transplant",
 # EDA 
 library(funModeling) 
 library(Hmisc)
+library(tidyverse)
 
 # Function for checking if any empty values (i.e. just "", and not as an NA)
 empty_string <- function(col) {
