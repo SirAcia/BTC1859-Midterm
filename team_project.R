@@ -200,6 +200,55 @@ mydata_fct$athens.insomnia.scale <- ifelse(mydata_fct$athens.insomnia.scale > 5,
 
 # Making models 
 
+#libraries for stepwise 
+library(ISLR)
+library(MASS)
+library(dplyr)
+
+mydata_fct2 <- mydata_fct %>% 
+  select(-SF36.PCS, -SF36.MCS)
+
+# Omitting NAs (check) 
+mydata_scales <- na.omit(mydata_fct2)
+
+# Making full model for stepwise 
+pitts_model_full <- glm(pittsburgh.quality.score~age+gender.fctr+BMI+time.transplant
+                   +liver.diagnosis.fctr+disease.recurrence.fctr+graft.rejection.dys.fctr
+                   +fibrosis.fctr+renal.failure.fctr+depression.fctr+corticoid.fctr, 
+                   data = mydata_scales, family = "binomial")
+
+# Making null model for stepwise 
+pitts_model_null <- glm(pittsburgh.quality.score~1, 
+                   data = mydata_scales, family = "binomial")
+
+summary(pitts_model_full)
+
+# Conducting stepwise backwards 
+pitts_model_full.step.back <- stepAIC(pitts_model, direction = "backward")
+
+# Conducting stepwise both
+pitts_model_full.step.both <- stepAIC(pitts_model, direction = "both")
+
+# Conducting stepwise forward 
+pitts_model_full.step.for <- stepAIC(pitts_model_null, direction = "forward", trace = F, scope = list(upper=pitts_model_full, lower=pitts_model_full))
+
+lm.step.forw <- stepAIC(lm.mod.null,direction = "forward",trace = F, scope = list(upper=lm.mod.full, lower=lm.mod.null))
+
+# Creating optimized model from stepwise 
+pitts_model_selected <- glm(pittsburgh.quality.score ~ age + gender.fctr + disease.recurrence.fctr + 
+                          renal.failure.fctr + depression.fctr, 
+                        data = mydata_scales, family = "binomial")
+
+summary(pitts_model_selected)
+
+
+# manual/literature models
+pitts_model_lit <- glm(pittsburgh.quality.score~time.transplant+BMI+
+                         depression.fctr+gender.fctr+disease.recurrence.fctr+
+                         graft.rejection.dys.fctr+renal.failure.fctr+
+                         fibrosis.fctr+corticoid.fctr, data = mydata_scales, 
+                       family = binomial)
+
 
 
 
