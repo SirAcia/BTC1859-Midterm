@@ -196,3 +196,10 @@ mydata_fct$epworth.sleep.scale <- ifelse(mydata_fct$epworth.sleep.scale > 10, 1,
 mydata_fct$athens.insomnia.scale <- ifelse(mydata_fct$athens.insomnia.scale > 5, 1, 0)
 
 
+# --------------------------------------------------------------------------------
+
+# Making models 
+
+
+
+
