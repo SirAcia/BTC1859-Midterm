@@ -179,3 +179,20 @@ ais_prevalence_poor_sleep <- ais_poor_sleep / total_ais_observations
 
 # Print the prevalence
 cat("AIS Prevalence of Sleep Disturbance:", ais_prevalence_poor_sleep, "\n")
+
+# --------------------------------------------------------------------------------
+
+# Converting clinical testing scales into binary variables 
+
+# For PSQI <- >4 == DISTURBANCE (1 = TRUE)
+# For ESS <- >10 == DISTURBANCE (1 = TRUE)
+# For AIS <- >5 == DISTURBANCE (TRUE)
+# For BSS <- == 1 == DISTURBANCE (TRUE)
+
+mydata_fct$pittsburgh.quality.score <- ifelse(mydata_fct$pittsburgh.quality.score > 4, 1, 0)
+
+mydata_fct$epworth.sleep.scale <- ifelse(mydata_fct$epworth.sleep.scale > 10, 1, 0)
+
+mydata_fct$athens.insomnia.scale <- ifelse(mydata_fct$athens.insomnia.scale > 5, 1, 0)
+
+
