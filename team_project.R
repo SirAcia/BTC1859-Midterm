@@ -251,6 +251,7 @@ pitts_model_lit <- glm(pittsburgh.quality.score~time.transplant+BMI+
                          fibrosis.fctr+corticoid.fctr, data = mydata_scales, 
                        family = binomial)
 
+pitts_model <- glm(pittsburgh.quality.score~time.transplant+BMI+depression.fctr+gender.fctr+disease.recurrence.fctr+graft.rejection.dys.fctr+renal.failure.fctr+fibrosis.fctr+corticoid.fctr, data = mydata_fct3, family = binomial)
 
 all_pitts <- glm(pittsburgh.quality.score~age+liver.diagnosis.fctr+time.transplant+BMI+depression.fctr+gender.fctr+disease.recurrence.fctr+graft.rejection.dys.fctr+renal.failure.fctr+fibrosis.fctr+corticoid.fctr3, data = mydata_fct, family = binomial)
 
