@@ -251,12 +251,16 @@ pitts_model_lit <- glm(pittsburgh.quality.score~time.transplant+BMI+
                          fibrosis.fctr+corticoid.fctr, data = mydata_scales, 
                        family = binomial)
 
+# Literature relevant predictors
 pitts_model <- glm(pittsburgh.quality.score~time.transplant+BMI+depression.fctr+gender.fctr+disease.recurrence.fctr+graft.rejection.dys.fctr+renal.failure.fctr+fibrosis.fctr+corticoid.fctr, data = mydata_fct3, family = binomial)
 
+# All predictors
 all_pitts <- glm(pittsburgh.quality.score~age+liver.diagnosis.fctr+time.transplant+BMI+depression.fctr+gender.fctr+disease.recurrence.fctr+graft.rejection.dys.fctr+renal.failure.fctr+fibrosis.fctr+corticoid.fctr3, data = mydata_fct, family = binomial)
 
+# significant predictors from all_pitts
 relevant_pitts <- glm(pittsburgh.quality.score~age+depression.fctr+disease.recurrence.fctr+graft.rejection.dys.fctr, data = mydata_fct3, family = binomial)
 
+# stepAIC model
 aic_pitts <- glm(pittsburgh.quality.score~age+depression.fctr+disease.recurrence.fctr+renal.failure.fctr+gender.fctr, data = mydata_fct3, family = binomial)
 
 summary(pitts_model)
