@@ -198,7 +198,7 @@ mydata_fct$athens.insomnia.scale <- ifelse(mydata_fct$athens.insomnia.scale > 5,
 
 # --------------------------------------------------------------------------------
 
-# Making models 
+# Making model dataset
 mydata_fct3 <- na.omit(mydata_fct)
 
 
@@ -207,11 +207,15 @@ library(ISLR)
 library(MASS)
 library(dplyr)
 
-mydata_fct2 <- mydata_fct %>% 
-  select(-SF36.PCS, -SF36.MCS)
+mydata_fct2 <- mydata_fct %>%
+  dplyr::select(-SF36.PCS, -SF36.MCS)
 
 # Omitting NAs (check) 
 mydata_scales <- na.omit(mydata_fct2)
+
+##########################
+### PITTS ################
+##########################
 
 # Making full model for stepwise 
 pitts_model_full <- glm(pittsburgh.quality.score~age+gender.fctr+BMI+time.transplant
@@ -219,30 +223,35 @@ pitts_model_full <- glm(pittsburgh.quality.score~age+gender.fctr+BMI+time.transp
                    +fibrosis.fctr+renal.failure.fctr+depression.fctr+corticoid.fctr, 
                    data = mydata_scales, family = "binomial")
 
+summary(pitts_model_full)
+
 # Making null model for stepwise 
 pitts_model_null <- glm(pittsburgh.quality.score~1, 
                    data = mydata_scales, family = "binomial")
 
-summary(pitts_model_full)
-
 # Conducting stepwise backwards 
-pitts_model_full.step.back <- stepAIC(pitts_model, direction = "backward")
+pitts_model_full.step.back <- stepAIC(pitts_model_full, direction = "backward", trace = F)
+
+summary(pitts_model_full.step.back)
+#'glm(formula = pittsburgh.quality.score ~ age + gender.fctr + 
+#'disease.recurrence.fctr + renal.failure.fctr + depression.fctr, 
+#'family = "binomial", data = mydata_scales)
 
 # Conducting stepwise both
-pitts_model_full.step.both <- stepAIC(pitts_model, direction = "both")
+pitts_model_full.step.both <- stepAIC(pitts_model_full, direction = "both", trace = F)
 
+summary(pitts_model_full.step.both)
+#'glm(formula = pittsburgh.quality.score ~ age + gender.fctr + 
+#'disease.recurrence.fctr + renal.failure.fctr + depression.fctr, 
+#'family = "binomial", data = mydata_scales)
+#'
 # Conducting stepwise forward 
-pitts_model_full.step.for <- stepAIC(pitts_model_null, direction = "forward", trace = F, scope = list(upper=pitts_model_full, lower=pitts_model_full))
+pitts_model_full.step.for <- stepAIC(pitts_model_null, direction = "forward", trace = F, scope = list(upper=pitts_model_full, lower=pitts_model_null))
 
-lm.step.forw <- stepAIC(lm.mod.null,direction = "forward",trace = F, scope = list(upper=lm.mod.full, lower=lm.mod.null))
-
-# Creating optimized model from stepwise 
-pitts_model_selected <- glm(pittsburgh.quality.score ~ age + gender.fctr + disease.recurrence.fctr + 
-                          renal.failure.fctr + depression.fctr, 
-                        data = mydata_scales, family = "binomial")
-
-summary(pitts_model_selected)
-
+summary(pitts_model_full.step.for)
+#'  glm(formula = pittsburgh.quality.score ~ depression.fctr + age + 
+#'   disease.recurrence.fctr + gender.fctr + renal.failure.fctr, 
+#'   family = "binomial", data = mydata_scales)"
 
 # manual/literature models
 pitts_model_lit <- glm(pittsburgh.quality.score~time.transplant+BMI+
@@ -250,6 +259,174 @@ pitts_model_lit <- glm(pittsburgh.quality.score~time.transplant+BMI+
                          graft.rejection.dys.fctr+renal.failure.fctr+
                          fibrosis.fctr+corticoid.fctr, data = mydata_scales, 
                        family = binomial)
+
+summary(pitts_model_lit)
+
+# --------------------------------------------------------------------------------
+
+##########################
+### Epworth ##############
+##########################
+
+# Making full model for stepwise (Epworth)
+epworth_model_full <- glm(epworth.sleep.scale~age+gender.fctr+BMI+time.transplant
+                        +liver.diagnosis.fctr+disease.recurrence.fctr+graft.rejection.dys.fctr
+                        +fibrosis.fctr+renal.failure.fctr+depression.fctr+corticoid.fctr, 
+                        data = mydata_scales, family = "binomial")
+
+summary(epworth_model_full)
+
+# Making null model for stepwise 
+epworth_model_null <- glm(epworth.sleep.scale~1, 
+                        data = mydata_scales, family = "binomial")
+
+# Conducting stepwise backwards 
+epworth_model_full.step.back <- stepAIC(epworth_model_full, direction = "backward", trace = F)
+
+summary(epworth_model_full.step.back)
+#' glm(formula = epworth.sleep.scale ~ liver.diagnosis.fctr + renal.failure.fctr + 
+#' corticoid.fctr, family = "binomial", data = mydata_scales)
+
+# Conducting stepwise both
+epworth_model_full.step.both <- stepAIC(epworth_model_full, direction = "both", trace = F)
+
+summary(epworth_model_full.step.both)
+#' glm(formula = epworth.sleep.scale ~ liver.diagnosis.fctr + renal.failure.fctr + 
+#' corticoid.fctr, family = "binomial", data = mydata_scales)
+
+
+# Conducting stepwise forward 
+epworth_model_full.step.for <- stepAIC(epworth_model_null, direction = "forward", trace = F, scope = list(upper=epworth_model_full, lower=epworth_model_null))
+
+summary(epworth_model_full.step.for)
+#'  glm(formula = epworth.sleep.scale ~ corticoid.fctr + liver.diagnosis.fctr + 
+#'  renal.failure.fctr, family = "binomial", data = mydata_scales)
+
+
+# manual/literature models
+epworth_model_lit <- glm(epworth.sleep.scale~time.transplant+BMI+
+                         depression.fctr+gender.fctr+disease.recurrence.fctr+
+                         graft.rejection.dys.fctr+renal.failure.fctr+
+                         fibrosis.fctr+corticoid.fctr, data = mydata_scales, 
+                       family = binomial)
+
+summary(epworth_model_lit)
+# --------------------------------------------------------------------------------
+
+
+##########################
+### Athens ##############
+##########################
+
+# Making full model for stepwise (Epworth)
+athens_model_full <- glm(athens.insomnia.scale~age+gender.fctr+BMI+time.transplant
+                          +liver.diagnosis.fctr+disease.recurrence.fctr+graft.rejection.dys.fctr
+                          +fibrosis.fctr+renal.failure.fctr+depression.fctr+corticoid.fctr, 
+                          data = mydata_scales, family = "binomial")
+
+summary(athens_model_full)
+
+# Making null model for stepwise 
+athens_model_null <- glm(athens.insomnia.scale~1, 
+                          data = mydata_scales, family = "binomial")
+
+# Conducting stepwise backwards 
+athens_model_full.step.back <- stepAIC(athens_model_full, direction = "backward", trace = F)
+
+summary(athens_model_full.step.back)
+#' glm(formula = athens.insomnia.scale ~ age + gender.fctr + liver.diagnosis.fctr + 
+#' depression.fctr + corticoid.fctr, family = "binomial", data = mydata_scales)
+
+# Conducting stepwise both
+athens_model_full.step.both <- stepAIC(athens_model_full, direction = "both", trace = F)
+
+summary(athens_model_full.step.both)
+#' glm(formula = athens.insomnia.scale ~ age + gender.fctr + liver.diagnosis.fctr + 
+#' depression.fctr + corticoid.fctr, family = "binomial", data = mydata_scales)
+
+
+# Conducting stepwise forward 
+athens_model_full.step.for <- stepAIC(athens_model_null, direction = "forward", trace = F, scope = list(upper=athens_model_full, lower=athens_model_null))
+
+summary(athens_model_full.step.for)
+#'  glm(formula = athens.insomnia.scale ~ liver.diagnosis.fctr + 
+#'  depression.fctr + corticoid.fctr + age + gender.fctr, family = "binomial", 
+#'  data = mydata_scales)
+
+# --------------------------------------------------------------------------------
+
+##########################
+### Berlin ###############
+##########################
+
+# Making full model for stepwise (Epworth)
+berlin_model_full <- glm(berlin.sleep.scale~age+gender.fctr+BMI+time.transplant
+                         +liver.diagnosis.fctr+disease.recurrence.fctr+graft.rejection.dys.fctr
+                         +fibrosis.fctr+renal.failure.fctr+depression.fctr+corticoid.fctr, 
+                         data = mydata_scales, family = "binomial")
+
+summary(berlin_model_full)
+
+# Making null model for stepwise 
+berlin_model_null <- glm(berlin.sleep.scale~1, 
+                         data = mydata_scales, family = "binomial")
+
+# Conducting stepwise backwards 
+berlin_model_full.step.back <- stepAIC(berlin_model_full, direction = "backward", trace = F)
+
+summary(berlin_model_full.step.back)
+#' glm(formula = berlin.sleep.scale ~ BMI + renal.failure.fctr, 
+#' family = "binomial", data = mydata_scales)
+
+# Conducting stepwise both
+berlin_model_full.step.both <- stepAIC(berlin_model_full, direction = "both", trace = F)
+
+summary(berlin_model_full.step.both)
+#' glm(formula = berlin.sleep.scale ~ BMI + renal.failure.fctr, 
+#' family = "binomial", data = mydata_scales)
+
+
+# Conducting stepwise forward 
+berlin_model_full.step.for <- stepAIC(berlin_model_null, direction = "forward", trace = F, scope = list(upper=berlin_model_full, lower=berlin_model_null))
+
+summary(berlin_model_full.step.for)
+#'  glm(formula = berlin.sleep.scale ~ BMI + renal.failure.fctr, 
+#'  family = "binomial", data = mydata_scales)
+
+# manual/literature models
+berlin_model_lit <- glm(berlin.sleep.scale~time.transplant+BMI+
+                           depression.fctr+gender.fctr+disease.recurrence.fctr+
+                           graft.rejection.dys.fctr+renal.failure.fctr+
+                           fibrosis.fctr+corticoid.fctr, data = mydata_scales, 
+                         family = binomial)
+
+summary(berlin_model_lit)
+
+
+# --------------------------------------------------------------------------------
+
+##########################
+### Correlation ##########
+##########################
+
+# Creating data frame to calculate corr
+corr_data <- mydata_num %>%
+  dplyr::select(SF36.PCS, SF36.MCS, berlin.sleep.scale, epworth.sleep.scale, pittsburgh.quality.score, 
+                athens.insomnia.scale)
+
+corr_data_2 <- na.omit(corr_data)
+
+cor(corr_data_2)
+corrplot(corr_data_2)
+
+
+
+# manual/literature models
+pitts_model_lit <- glm(pittsburgh.quality.score~time.transplant+BMI+
+                         depression.fctr+gender.fctr+disease.recurrence.fctr+
+                         graft.rejection.dys.fctr+renal.failure.fctr+
+                         fibrosis.fctr+corticoid.fctr, data = mydata_scales, 
+                         family = binomial)
 
 # Literature relevant predictors
 pitts_model <- glm(pittsburgh.quality.score~time.transplant+BMI+depression.fctr+gender.fctr+disease.recurrence.fctr+graft.rejection.dys.fctr+renal.failure.fctr+fibrosis.fctr+corticoid.fctr, data = mydata_fct3, family = binomial)
