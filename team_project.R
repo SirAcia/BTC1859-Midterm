@@ -6,6 +6,8 @@ library(funModeling)
 library(Hmisc)
 library(tidyverse)
 library(mice)
+library(ISLR)
+library(MASS)
 library(dplyr)
 
 # Reading raw data into data frame 
@@ -240,12 +242,6 @@ mydata_fct$athens.insomnia.scale <- ifelse(mydata_fct$athens.insomnia.scale > 5,
 
 # Making model dataset
 mydata_fct3 <- na.omit(mydata_fct)
-
-
-#libraries for stepwise 
-library(ISLR)
-library(MASS)
-library(dplyr)
 
 mydata_fct2 <- mydata_fct %>%
   dplyr::select(-SF36.PCS, -SF36.MCS)
