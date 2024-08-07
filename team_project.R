@@ -6,6 +6,8 @@ library(funModeling)
 library(Hmisc)
 library(tidyverse)
 library(mice)
+library(ISLR)
+library(MASS)
 library(dplyr)
 
 # Reading raw data into data frame 
@@ -151,7 +153,7 @@ mydata_raw$Depression_fctr <- factor(mydata_raw$Depression, levels = c(0, 1), la
 mydata_raw$Corticoid_fctr <- factor(mydata_raw$Corticoid, levels = c(0, 1), labels = c("N", "Y")) 
 
 mydata_fct <- mydata_raw %>%
-  select(gender.fctr = Gender_fctr, age = Age, BMI, time.transplant = Time.from.transplant, 
+  dplyr::select(gender.fctr = Gender_fctr, age = Age, BMI, time.transplant = Time.from.transplant, 
          liver.diagnosis.fctr = Liver.Diagnosis_fctr, disease.recurrence.fctr = Recurrence.of.disease_fctr, 
          graft.rejection.dys.fctr = Rejection.graft.dysfunction_fctr, fibrosis.fctr = Any.fibrosis_fctr, renal.failure.fctr = Renal.Failure_fctr, 
          depression.fctr = Depression_fctr, corticoid.fctr = Corticoid_fctr, epworth.sleep.scale = Epworth.Sleepiness.Scale, 
@@ -240,12 +242,6 @@ mydata_fct$athens.insomnia.scale <- ifelse(mydata_fct$athens.insomnia.scale > 5,
 
 # Making model dataset
 mydata_fct3 <- na.omit(mydata_fct)
-
-
-#libraries for stepwise 
-library(ISLR)
-library(MASS)
-library(dplyr)
 
 mydata_fct2 <- mydata_fct %>%
   dplyr::select(-SF36.PCS, -SF36.MCS)
