@@ -402,6 +402,8 @@ berlin_model_lit <- glm(berlin.sleep.scale~time.transplant+BMI+
 
 summary(berlin_model_lit)
 
+anova()
+
 
 # --------------------------------------------------------------------------------
 
