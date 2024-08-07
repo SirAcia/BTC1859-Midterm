@@ -45,10 +45,6 @@ glimpse(mydata_raw)
 basic_eda(mydata_raw)
 # No zeroes in gender 
 
-empty_string <- function(col) {
-  any(col == "")
-}
-
 empty_string(mydata_raw)
 # No blank strings (makes sense as all data is in numeric form), 
 # 268 obs TOTAL 
@@ -262,6 +258,8 @@ pitts_model_lit <- glm(pittsburgh.quality.score~time.transplant+BMI+
 
 summary(pitts_model_lit)
 
+#' the stepAIC methods have lower AIC compared to the literature
+
 # --------------------------------------------------------------------------------
 
 ##########################
@@ -311,6 +309,9 @@ epworth_model_lit <- glm(epworth.sleep.scale~time.transplant+BMI+
                        family = binomial)
 
 summary(epworth_model_lit)
+
+#' the stepAIC methods have lower AIC compared to the literature
+
 # --------------------------------------------------------------------------------
 
 
@@ -352,6 +353,17 @@ summary(athens_model_full.step.for)
 #'  glm(formula = athens.insomnia.scale ~ liver.diagnosis.fctr + 
 #'  depression.fctr + corticoid.fctr + age + gender.fctr, family = "binomial", 
 #'  data = mydata_scales)
+
+# manual/literature models
+athens_model_lit <- glm(athens.insomnia.scale~time.transplant+BMI+
+                           depression.fctr+gender.fctr+disease.recurrence.fctr+
+                           graft.rejection.dys.fctr+renal.failure.fctr+
+                           fibrosis.fctr+corticoid.fctr, data = mydata_scales, 
+                         family = binomial)
+
+summary(athens_model_lit)
+
+#' the stepAIC methods have lower AIC compared to the literature
 
 # --------------------------------------------------------------------------------
 
@@ -402,12 +414,15 @@ berlin_model_lit <- glm(berlin.sleep.scale~time.transplant+BMI+
 
 summary(berlin_model_lit)
 
+#' the stepAIC methods have lower AIC compared to the literature
 
 # --------------------------------------------------------------------------------
 
 ##########################
 ### Correlation ##########
 ##########################
+
+library(corrplot)
 
 # Creating data frame to calculate corr
 corr_data <- mydata_num %>%
@@ -416,34 +431,133 @@ corr_data <- mydata_num %>%
 
 corr_data_2 <- na.omit(corr_data)
 
-cor(corr_data_2)
-corrplot(corr_data_2)
+cor_mat <- cor(corr_data_2)
+corrplot(cor_mat)
 
 
 
-# manual/literature models
-pitts_model_lit <- glm(pittsburgh.quality.score~time.transplant+BMI+
-                         depression.fctr+gender.fctr+disease.recurrence.fctr+
-                         graft.rejection.dys.fctr+renal.failure.fctr+
-                         fibrosis.fctr+corticoid.fctr, data = mydata_scales, 
-                         family = binomial)
+mydata_num$SF36_Avg <- rowMeans(mydata_num[ ,c("SF36.PCS", "SF36.MCS")])
 
-# Literature relevant predictors
-pitts_model <- glm(pittsburgh.quality.score~time.transplant+BMI+depression.fctr+gender.fctr+disease.recurrence.fctr+graft.rejection.dys.fctr+renal.failure.fctr+fibrosis.fctr+corticoid.fctr, data = mydata_fct3, family = binomial)
+mydata_clean <- mydata_num %>%
+  filter(!is.na(epworth.sleep.scale) &
+           !is.na(pittsburgh.quality.score) &
+           !is.na(athens.insomnia.scale) &
+           !is.na(berlin.sleep.scale) &
+           !is.na(SF36_Avg))
 
-# All predictors
-all_pitts <- glm(pittsburgh.quality.score~age+liver.diagnosis.fctr+time.transplant+BMI+depression.fctr+gender.fctr+disease.recurrence.fctr+graft.rejection.dys.fctr+renal.failure.fctr+fibrosis.fctr+corticoid.fctr3, data = mydata_fct, family = binomial)
 
-# significant predictors from all_pitts
-relevant_pitts <- glm(pittsburgh.quality.score~age+depression.fctr+disease.recurrence.fctr+graft.rejection.dys.fctr, data = mydata_fct3, family = binomial)
+# plotting the PSQI and SFF
 
-# stepAIC model
-aic_pitts <- glm(pittsburgh.quality.score~age+depression.fctr+disease.recurrence.fctr+renal.failure.fctr+gender.fctr, data = mydata_fct3, family = binomial)
+#mydata_psqi_sf36 <- subset(mydata_num, !is.na(pittsburgh.quality.score) & !is.na(SF36_Avg), 
+#select = c(pittsburgh.quality.score, SF36_Avg))
 
-summary(pitts_model)
+# Plot PSQI against quality of life
 
-summary(all_pitts)
+# Plot PSQI against SF36_Avg 
+plot(mydata_clean$pittsburgh.quality.score, mydata_clean$SF36_Avg,
+     main = "PSQI vs SF36 Average",
+     xlab = "PSQI Score",
+     ylab = "SF36 Average",
+     pch = 19)
+abline(lm(SF36_Avg ~ pittsburgh.quality.score, data = mydata_clean), col = "red")
 
-summary(relevant_pitts)
+# PSQI against SF36.PCS
+plot(mydata_clean$pittsburgh.quality.score, mydata_clean$SF36.PCS,
+     main = "PSQI vs SF36 PCS",
+     xlab = "PSQI Score",
+     ylab = "SF36 PCS",
+     pch = 19)
+abline(lm(SF36.PCS ~ pittsburgh.quality.score, data = mydata_clean), col = "red")
 
-summary(aic_pitts)
+# PSQI against SF36.MCS
+plot(mydata_clean$pittsburgh.quality.score, mydata_clean$SF36.MCS,
+     main = "PSQI vs SF36 MCS",
+     xlab = "PSQI Score",
+     ylab = "SF36 MCS",
+     pch = 19)
+abline(lm(SF36.MCS ~ pittsburgh.quality.score, data = mydata_clean), col = "red")
+
+
+# Plot ESS against quality of life
+
+# Plot ESS against SF36_Avg 
+plot(mydata_clean$epworth.sleep.scale, mydata_clean$SF36_Avg,
+     main = "ESS vs SF36 Average",
+     xlab = "ESS Score",
+     ylab = "SF36 Average",
+     pch = 19)
+abline(lm(SF36_Avg ~ epworth.sleep.scale, data = mydata_clean), col = "blue")
+
+# Plot ESS against SF36.PCS
+plot(mydata_clean$epworth.sleep.scale, mydata_clean$SF36.PCS,
+     main = "ESS vs SF36.PCS",
+     xlab = "ESS Score",
+     ylab = "SF36.PCS",
+     pch = 19)
+abline(lm(SF36.PCS ~ epworth.sleep.scale, data = mydata_clean), col = "blue")
+
+# Plot ESS against SF36.MCS 
+plot(mydata_clean$epworth.sleep.scale, mydata_clean$SF36.MCS,
+     main = "ESS vs SF36.MCS",
+     xlab = "ESS Score",
+     ylab = "SF36.MCS",
+     pch = 19)
+abline(lm(SF36.MCS ~ epworth.sleep.scale, data = mydata_clean), col = "blue")
+
+# Plot AIS against quality of life
+
+# Plot AIS against SF36_Avg 
+plot(mydata_clean$athens.insomnia.scale, mydata_clean$SF36_Avg,
+     main = "AIS vs SF36 Average",
+     xlab = "AIS Score",
+     ylab = "SF36 Average",
+     pch = 19)
+abline(lm(SF36_Avg ~ athens.insomnia.scale, data = mydata_clean), col = "green")
+
+# Plot AIS against SF36.PCS 
+plot(mydata_clean$athens.insomnia.scale, mydata_clean$SF36.PCS,
+     main = "AIS vs SF36.PCS",
+     xlab = "AIS Score",
+     ylab = "SF36.PCS",
+     pch = 19)
+abline(lm(SF36.PCS ~ athens.insomnia.scale, data = mydata_clean), col = "green")
+
+# Plot AIS against SF36.MCS 
+plot(mydata_clean$athens.insomnia.scale, mydata_clean$SF36.MCS,
+     main = "AIS vs SF36.MCS",
+     xlab = "AIS Score",
+     ylab = "SF36.MCS",
+     pch = 19)
+abline(lm(SF36.MCS ~ athens.insomnia.scale, data = mydata_clean), col = "green")
+
+# Plot BSS against quality of life
+
+# Plot BSS against SF36_Avg 
+plot(mydata_clean$berlin.sleep.scale, mydata_clean$SF36_Avg,
+     main = "BSS vs SF36 Average",
+     xlab = "BSS Score",
+     ylab = "SF36 Average",
+     pch = 19)
+abline(lm(SF36_Avg ~ berlin.sleep.scale, data = mydata_clean), col = "purple")
+
+# Box plot for BSS vs SF36 Average
+boxplot(SF36_Avg ~ berlin.sleep.scale, data = mydata_clean,
+        main = "BSS vs SF36 Average",
+        xlab = "BSS (0 = No Disturbance, 1 = Disturbance)",
+        ylab = "SF36 Average",
+        col = c("lightblue", "lightgreen"))
+
+
+# Calculate correlations using cor.test
+cor_psqi <- cor.test(mydata_clean$pittsburgh.quality.score, mydata_clean$SF36_Avg, method = "pearson")
+cor_ess <- cor.test(mydata_clean$epworth.sleep.scale, mydata_clean$SF36_Avg, method = "pearson")
+cor_ais <- cor.test(mydata_clean$athens.insomnia.scale, mydata_clean$SF36_Avg, method = "pearson")
+cor_bss <- cor.test(mydata_clean$berlin.sleep.scale, mydata_clean$SF36_Avg, method = "pearson")
+
+cor_psqi
+
+cor_ess
+
+cor_ais
+
+cor_bss
