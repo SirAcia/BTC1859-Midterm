@@ -119,7 +119,7 @@ view(mydata_raw)
 basic_eda(mydata_raw)
 
 mydata_num <- mydata_raw %>%
-    select(gender = Gender, age = Age, BMI, time.transplant = Time.from.transplant, 
+    dplyr::select(gender = Gender, age = Age, BMI, time.transplant = Time.from.transplant, 
            liver.diagnosis = Liver.Diagnosis, disease.recurrence = Recurrence.of.disease, 
            graft.rejection.dys = Rejection.graft.dysfunction, fibrosis = Any.fibrosis, renal.failure = Renal.Failure, 
            depression = Depression, corticoid = Corticoid, epworth.sleep.scale = Epworth.Sleepiness.Scale, 
