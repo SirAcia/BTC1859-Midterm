@@ -486,7 +486,7 @@ mydata_clean <- mydata_num %>%
            !is.na(SF36_Avg))
 
 
-# plotting the PSQI and SFF
+# Plotting the PSQI and SFF
 
 #mydata_psqi_sf36 <- subset(mydata_num, !is.na(pittsburgh.quality.score) & !is.na(SF36_Avg), 
 #select = c(pittsburgh.quality.score, SF36_Avg))
