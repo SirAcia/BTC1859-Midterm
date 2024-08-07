@@ -1,5 +1,14 @@
 # Team project
+# Mikael Goutama, Zachery Chan, Mausam ______
 
+
+library(funModeling) 
+library(Hmisc)
+library(tidyverse)
+library(mice)
+library(dplyr)
+
+# Reading raw data into data frame 
 mydata <- read.csv("./project_data.csv")
 
 # It is perceived that patients with liver transplant have problems with sleep. 
@@ -8,6 +17,7 @@ mydata <- read.csv("./project_data.csv")
 # The objective of this project is the investigation of these hypotheses with 
 # the use of an observational dataset of 268 patients with liver transplant. 
 
+# Subsetting original data to get raw data for variables of interest 
 mydata_raw <- subset(mydata, , c("Gender", "Age", "BMI", "Time.from.transplant",
                                   "Liver.Diagnosis", "Recurrence.of.disease",
                                   "Rejection.graft.dysfunction", "Any.fibrosis",
@@ -17,10 +27,6 @@ mydata_raw <- subset(mydata, , c("Gender", "Age", "BMI", "Time.from.transplant",
                                   "SF36.PCS", "SF36.MCS"))
 
 # --------------------------------------------------------------------------------
-# EDA 
-library(funModeling) 
-library(Hmisc)
-library(tidyverse)
 
 # Function for checking if any empty values (i.e. just "", and not as an NA)
 empty_string <- function(col) {
@@ -38,6 +44,7 @@ basic_eda <- function(data)
   describe(data)
 }
 
+# Examining structure of raw data 
 str(mydata_raw)
 
 glimpse(mydata_raw)
@@ -74,9 +81,6 @@ empty_string(mydata_raw)
 # Setting gender as 1 = F, 0 = M, to match the rest of the data 
 mydata_raw$Gender <- ifelse(mydata_raw$Gender == "2", 1, 0)
 
-# Load mice package
-library(mice)
-
 # Define the imputation methods for each column
 imp_methods <- c(Gender = "",
                  Age = "norm.nob",
@@ -102,7 +106,7 @@ imputed_data <- mice(mydata_raw, method = imp_methods, seed = 32, m = 1, print =
 # Extract the complete data set with imputed values
 mydata_raw<- complete(imputed_data, 1)
 
-# Make whole numbers for scales
+# Rounding to whole numbers for clinical scales
 mydata_raw$Epworth.Sleepiness.Scale <- round(mydata_raw$Epworth.Sleepiness.Scale)
 mydata_raw$Pittsburgh.Sleep.Quality.Index.Score <- round(mydata_raw$Pittsburgh.Sleep.Quality.Index.Score)
 mydata_raw$Athens.Insomnia.Scale <- round(mydata_raw$Athens.Insomnia.Scale)
@@ -586,6 +590,8 @@ boxplot(SF36_Avg ~ berlin.sleep.scale, data = mydata_clean,
         xlab = "BSS (0 = No Disturbance, 1 = Disturbance)",
         ylab = "SF36 Average",
         col = c("lightblue", "lightgreen"))
+
+lm(SF36_Avg ~ berlin.sleep.scale+epworth.sleep.scale+pittsburgh.quality.score+athens.insomnia.scale, data = mydata_clean)
 
 
 # Calculate correlations using cor.test
