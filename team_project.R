@@ -74,14 +74,15 @@ empty_string(mydata_raw)
 # Setting gender as 1 = F, 0 = M, to match the rest of the data 
 mydata_raw$Gender <- ifelse(mydata_raw$Gender == "2", 1, 0)
 
-# Imputation
+# Load mice package
 library(mice)
 
+# Define the imputation methods for each column
 imp_methods <- c(Gender = "",
                  Age = "norm.nob",
                  BMI = "norm.nob",
                  Time.from.transplant = "",
-                 Liver.Diagnosis.= "",
+                 Liver.Diagnosis = "",
                  Recurrence.of.disease = "",
                  Rejection.graft.dysfunction = "",
                  Any.fibrosis = "",
@@ -95,10 +96,23 @@ imp_methods <- c(Gender = "",
                  SF36.PCS = "norm.nob",
                  SF36.MCS = "norm.nob")
 
-mydata_raw <- mice(mydata_raw, method = imp_methods, seed = 32, m = 1, print = FALSE)
+# Perform imputation
+imputed_data <- mice(mydata_raw, method = imp_methods, seed = 32, m = 1, print = FALSE)
 
 # Extract the complete data set with imputed values
-mydata_raw_imputed <- complete(mydata_raw, 1)
+mydata_raw<- complete(imputed_data, 1)
+
+# Make whole numbers for scales
+mydata_raw$Epworth.Sleepiness.Scale <- round(mydata_raw$Epworth.Sleepiness.Scale)
+mydata_raw$Pittsburgh.Sleep.Quality.Index.Score <- round(mydata_raw$Pittsburgh.Sleep.Quality.Index.Score)
+mydata_raw$Athens.Insomnia.Scale <- round(mydata_raw$Athens.Insomnia.Scale)
+
+# Binary values for Berlin.Sleepiness.Scale
+mydata_raw$Berlin.Sleepiness.Scale <- ifelse(mydata_raw$Berlin.Sleepiness.Scale >= 0.5, 1, 0)
+
+view(mydata_raw)
+
+basic_eda(mydata_raw)
 
 mydata_num <- mydata_raw %>%
     select(gender = Gender, age = Age, BMI, time.transplant = Time.from.transplant, 
