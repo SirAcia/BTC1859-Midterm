@@ -74,6 +74,32 @@ empty_string(mydata_raw)
 # Setting gender as 1 = F, 0 = M, to match the rest of the data 
 mydata_raw$Gender <- ifelse(mydata_raw$Gender == "2", 1, 0)
 
+# Imputation
+library(mice)
+
+imp_methods <- c(Gender = "",
+                 Age = "norm.nob",
+                 BMI = "norm.nob",
+                 Time.from.transplant = "",
+                 Liver.Diagnosis.= "",
+                 Recurrence.of.disease = "",
+                 Rejection.graft.dysfunction = "",
+                 Any.fibrosis = "",
+                 Renal.Failure = "",
+                 Depression = "",
+                 Corticoid = "",
+                 Epworth.Sleepiness.Scale = "norm.nob",
+                 Pittsburgh.Sleep.Quality.Index.Score = "norm.nob",
+                 Athens.Insomnia.Scale = "norm.nob",
+                 Berlin.Sleepiness.Scale = "logreg",
+                 SF36.PCS = "norm.nob",
+                 SF36.MCS = "norm.nob")
+
+mydata_raw <- mice(mydata_raw, method = imp_methods, seed = 32, m = 1, print = FALSE)
+
+# Extract the complete data set with imputed values
+mydata_raw_imputed <- complete(mydata_raw, 1)
+
 mydata_num <- mydata_raw %>%
     select(gender = Gender, age = Age, BMI, time.transplant = Time.from.transplant, 
            liver.diagnosis = Liver.Diagnosis, disease.recurrence = Recurrence.of.disease, 
