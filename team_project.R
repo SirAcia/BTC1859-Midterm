@@ -1,5 +1,5 @@
-# Team project
-# Mikael Goutama, Zachery Chan, Mausam ______
+# BTC1859 Team project
+# Mikael Goutama, Zachery Chan, Mausam Vadakkayil
 
 
 library(funModeling) 
