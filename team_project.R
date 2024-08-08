@@ -288,7 +288,7 @@ summary(pitts_model_full.step.for)
 #'   disease.recurrence.fctr + gender.fctr + renal.failure.fctr, 
 #'   family = "binomial", data = mydata_scales)"
 
-# manual/literature models
+# manual/literature model
 pitts_model_lit <- glm(pittsburgh.quality.score~time.transplant+BMI+
                          depression.fctr+gender.fctr+disease.recurrence.fctr+
                          graft.rejection.dys.fctr+renal.failure.fctr+
@@ -297,7 +297,7 @@ pitts_model_lit <- glm(pittsburgh.quality.score~time.transplant+BMI+
 
 summary(pitts_model_lit)
 
-#' the stepAIC methods have lower AIC compared to the literature
+#' the stepAIC models have lower AIC compared to the literature model
 
 # --------------------------------------------------------------------------------
 
@@ -349,7 +349,7 @@ epworth_model_lit <- glm(epworth.sleep.scale~time.transplant+BMI+
 
 summary(epworth_model_lit)
 
-#' the stepAIC methods have lower AIC compared to the literature
+#' the stepAIC models have lower AIC compared to the literature model
 
 # --------------------------------------------------------------------------------
 
@@ -402,7 +402,7 @@ athens_model_lit <- glm(athens.insomnia.scale~time.transplant+BMI+
 
 summary(athens_model_lit)
 
-#' the stepAIC methods have lower AIC compared to the literature
+#' the stepAIC models have lower AIC compared to the literature model
 
 # --------------------------------------------------------------------------------
 
@@ -453,7 +453,7 @@ berlin_model_lit <- glm(berlin.sleep.scale~time.transplant+BMI+
 
 summary(berlin_model_lit)
 
-#' the stepAIC methods have lower AIC compared to the literature
+#' the stepAIC models have lower AIC compared to the literature model
 
 # --------------------------------------------------------------------------------
 
@@ -602,3 +602,4 @@ cor_ess
 cor_ais
 
 cor_bss
+
