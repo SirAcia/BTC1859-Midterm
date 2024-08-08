@@ -1,7 +1,6 @@
 # BTC1859 Team project
 # Mikael Goutama, Zachery Chan, Mausam Vadakkayil
 
-
 library(funModeling) 
 library(Hmisc)
 library(tidyverse)
