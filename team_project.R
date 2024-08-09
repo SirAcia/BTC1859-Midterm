@@ -783,7 +783,7 @@ abline(lm(SF36_Avg ~ berlin.sleep.scale, data = mydata_clean), col = "purple")
 # Box plot for BSS vs SF36 Average
 boxplot(SF36_Avg ~ berlin.sleep.scale, data = mydata_clean,
         main = "BSS vs SF36_Average",
-        xlab = "BSS (0 = No Disturbance, 1 = Disturbance)",
+        xlab = "BSS (0 = No Sleep Disturbance, 1 = Sleep Disturbance)",
         ylab = "SF36 Average",
         col = c("lightblue", "lightgreen"))
 
