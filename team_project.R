@@ -1,5 +1,13 @@
 # BTC1859 Team project
 # Mikael Goutama, Zachery Chan, Mausam Vadakkayil
+# Github Repo: 
+# Code dated to: Aug 9, 2024 
+
+# --------------------------------------------------------------------------------
+
+##########################
+##### Libraries ##########
+##########################
 
 library(funModeling) 
 library(Hmisc)
@@ -9,6 +17,34 @@ library(ISLR)
 library(MASS)
 library(dplyr)
 library(car)
+
+# --------------------------------------------------------------------------------
+
+##########################
+### Functions ############
+##########################
+
+# Function for checking if any empty values (i.e. just "", and not as an NA)
+empty_string <- function(col) {
+  any(col == "")
+}
+
+# Exploratory Descriptive Analysis from Datasciencehereos (listed in assignment)
+basic_eda <- function(data)
+{
+  glimpse(data)
+  print(status(data))
+  freq(data) 
+  print(profiling_num(data))
+  plot_num(data)
+  describe(data)
+}
+
+# --------------------------------------------------------------------------------
+
+##########################
+### Reading Data #########
+##########################
 
 # Reading raw data into data frame 
 mydata <- read.csv("./project_data.csv")
@@ -30,55 +66,40 @@ mydata_raw <- subset(mydata, , c("Gender", "Age", "BMI", "Time.from.transplant",
 
 # --------------------------------------------------------------------------------
 
-# Function for checking if any empty values (i.e. just "", and not as an NA)
-empty_string <- function(col) {
-  any(col == "")
-}
-
-# Exploratory Descriptive Analysis from Datasciencehereos (listed in assignment)
-basic_eda <- function(data)
-{
-  glimpse(data)
-  print(status(data))
-  freq(data) 
-  print(profiling_num(data))
-  plot_num(data)
-  describe(data)
-}
-
 # Examining structure of raw data 
 str(mydata_raw)
 
 glimpse(mydata_raw)
 
 basic_eda(mydata_raw)
-# No zeroes in gender 
+# No zeroes in gender, coded as 1s and 2s 
 
 empty_string(mydata_raw)
 # No blank strings (makes sense as all data is in numeric form), 
 # 268 obs TOTAL 
-# Only age, BMI, and time from transplant is considered continoues, rest is categorical 
+
+# Only age, BMI, and time from transplant is considered continous, rest is categorical 
 # NAs in BMI (2), Age (2), BMI(23), Epworth (17), Pitt(85), Athens (6), Berlin (6)
 # SF36(21), SF36(21) 
-# no extreme outliers in age (only at 70, loqwest is at 18 --> GOOD ONLY ADULTS+)
-# some concerns with BMI (40+ is morbid obesity, highest 5 is 45, 43, 42, 42, 41)
-# DO WE REMOVE OR NO? 
-# (I think it is ok to leave)
+
+# no extreme outliers in age or BMI (only at 70, lowest is at 18 --> GOOD ONLY ADULTS)
 
 # LEGEND FOR CATEGORICAL (FROM DATA DICTIONARY)
-#' gender <- 1 = M, 2 = F 
-#' Liver.Diagnosis <- Liver Diagnosis (1 = Hep C, 2 = Hep B, 3 = PSC/PBC/AHA, 
-#'    4 = alcohol, 5 = other NASH/Hepatoma, Biliary atresia, 
-#'    Tyrosenemia/congenital/neonatal/AAT/Wilsons, HCC, FHF, 
-#'    cryptogenic, Angiosarcoma/tumor)
-#' recurrence <- Recurrence of original disease process (1 = yes, 0 = no)
-#' rejection <- Evidence of rejection/graft dysfunction either 
-#'    as evidenced by pathology or by clinical judgement based on treating
-#'     hepatologist (1 = yes, 0 = no)
-#' Any.fibrosis <- Evidence of fibrosis grade A2 and higher (1 = yes, 0 = no)
-#' renal.failure <- Renal failure (1 = yes, 0 = no)
-#' depression <- Depression (1 = yes, 0 = no)
-#' steriod <- Corticosteroid (1 = yes, 0 = no)
+#' - Gender: 1 = M, 2 = F 
+#' - Liver Diagnosis:  1 = Hep C, 
+#'                     2 = Hep B, 
+#'                     3 = PSC/PBC/AHA, 
+#'                     4 = alcohol, 
+#'                     5 = other NASH/Hepatoma, Biliary atresia, 
+#'                         Tyrosenemia/congenital/neonatal/AAT/Wilsons, HCC, FHF, 
+#'                         cryptogenic, Angiosarcoma/tumor
+#' - Recurrence of original disease process: 1 = yes, 0 = no
+#' - Evidence of rejection/graft dysfunction either as evidenced by pathology 
+#'   or by clinical judgement based on treating hepatologist: 1 = yes, 0 = no
+#' - Evidence of fibrosis grade A2 and higher: 1 = yes, 0 = no
+#' - Renal failure: 1 = yes, 0 = no
+#' - Depression 1 = yes, 0 = no
+#' - Corticosteroid: 1 = yes, 0 = no
 
 # Setting gender as 1 = F, 0 = M, to match the rest of the data 
 mydata_raw$Gender <- ifelse(mydata_raw$Gender == "2", 1, 0)
