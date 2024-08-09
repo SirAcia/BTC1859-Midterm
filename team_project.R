@@ -587,9 +587,6 @@ berlin_model_null <- glm(berlin.sleep.scale~1,
 berlin_model_full.step.back <- stepAIC(berlin_model_full, direction = "backward", trace = F)
 
 summary(berlin_model_full.step.back)
-#' glm(formula = berlin.sleep.scale ~ age + BMI + time.transplant + 
-#' disease.recurrence.fctr + fibrosis.fctr + renal.failure.fctr, 
-#' family = "binomial", data = mydata_scales)
 #' AIC: 322.43
 
 # Conducting stepwise forward 
@@ -597,7 +594,7 @@ berlin_model_full.step.for <- stepAIC(berlin_model_null, direction = "forward", 
 
 summary(berlin_model_full.step.for)
 #'  AIC: 321.41
-#'  Forward stepwise has lower AIC, will prefer using forward stepwise model as compared to bakcwards 
+#'  Forward stepwise has lower AIC, will prefer using forward stepwise model as compared to backwards 
 
 # Measuring colinearity for hybrid model
 vif(berlin_model_full.step.for)
