@@ -18,6 +18,7 @@ library(MASS)
 library(dplyr)
 library(car)
 
+
 # --------------------------------------------------------------------------------
 
 ##########################
@@ -39,6 +40,27 @@ basic_eda <- function(data)
   plot_num(data)
   describe(data)
 }
+
+# Function for calculating predictor limit for regression models
+pred_limit <- function(data, column_name) {
+  # Get the specific column from the data
+  column_data <- data[[column_name]]
+  
+  # Count the number of cases in each class
+  class_1 <- sum(column_data == 1)
+  class_2 <- sum(column_data == 0)
+  
+  # Calculate the prediction limit based on the smaller class, using p < m/15 rule of thumb 
+  if (class_1 < class_2) {
+    pred_limit_value <- class_1 / 15
+  } else {
+    pred_limit_value <- class_2 / 15
+  }
+  
+  # Returning prediction limit
+  return(pred_limit_value)
+}
+
 
 # --------------------------------------------------------------------------------
 
@@ -63,6 +85,7 @@ mydata_raw <- subset(mydata, , c("Gender", "Age", "BMI", "Time.from.transplant",
                                   "Epworth.Sleepiness.Scale", "Pittsburgh.Sleep.Quality.Index.Score",
                                   "Athens.Insomnia.Scale", "Berlin.Sleepiness.Scale",
                                   "SF36.PCS", "SF36.MCS"))
+
 
 # --------------------------------------------------------------------------------
 
@@ -108,6 +131,7 @@ empty_string(mydata_raw)
 # Setting gender as 1 = F, 0 = M, to match the rest of the data 
 mydata_raw$Gender <- ifelse(mydata_raw$Gender == "2", 1, 0)
 
+
 # --------------------------------------------------------------------------------
 
 ##########################
@@ -137,20 +161,22 @@ imp_methods <- c(Gender = "",
 imputed_data <- mice(mydata_raw, method = imp_methods, seed = 32, m = 1, print = FALSE)
 
 # Extracting complete data set with imputed values
-mydata_raw<- complete(imputed_data, 1)
+mydata_imp<- complete(imputed_data, 1)
 
 # Rounding to whole numbers for clinical scales
-mydata_raw$Epworth.Sleepiness.Scale <- round(mydata_raw$Epworth.Sleepiness.Scale)
-mydata_raw$Pittsburgh.Sleep.Quality.Index.Score <- round(mydata_raw$Pittsburgh.Sleep.Quality.Index.Score)
-mydata_raw$Athens.Insomnia.Scale <- round(mydata_raw$Athens.Insomnia.Scale)
+mydata_imp$Epworth.Sleepiness.Scale <- round(mydata_imp$Epworth.Sleepiness.Scale)
+mydata_imp$Pittsburgh.Sleep.Quality.Index.Score <- round(mydata_imp$Pittsburgh.Sleep.Quality.Index.Score)
+mydata_imp$Athens.Insomnia.Scale <- round(mydata_imp$Athens.Insomnia.Scale)
 
 # Binary values for Berlin.Sleepiness.Scale
-mydata_raw$Berlin.Sleepiness.Scale <- ifelse(mydata_raw$Berlin.Sleepiness.Scale >= 0.5, 1, 0)
+mydata_imp$Berlin.Sleepiness.Scale <- ifelse(mydata_imp$Berlin.Sleepiness.Scale >= 0.5, 1, 0)
 
 # Exploratory analysis post-imputation
-view(mydata_raw)
+glimpse(mydata_imp)
 
-basic_eda(mydata_raw)
+anyNA(mydata_imp)
+# No NAs anymore
+
 
 # --------------------------------------------------------------------------------
 
@@ -159,7 +185,7 @@ basic_eda(mydata_raw)
 #################################
 
 # Saving dataset with numerical variables for correlation analysis
-mydata_num <- mydata_raw %>%
+mydata_num <- mydata_imp %>%
   dplyr::select(gender = Gender, age = Age, BMI, time.transplant = Time.from.transplant, 
                 liver.diagnosis = Liver.Diagnosis, disease.recurrence = Recurrence.of.disease, 
                 graft.rejection.dys = Rejection.graft.dysfunction, fibrosis = Any.fibrosis, renal.failure = Renal.Failure, 
@@ -167,34 +193,58 @@ mydata_num <- mydata_raw %>%
                 pittsburgh.quality.score = Pittsburgh.Sleep.Quality.Index.Score, athens.insomnia.scale = Athens.Insomnia.Scale, 
                 berlin.sleep.scale = Berlin.Sleepiness.Scale, SF36.PCS, SF36.MCS)
 
+
 # --------------------------------------------------------------------------------
 
 #################################
 ### Categorical Dataset #########
 #################################
 
-mydata_raw$Gender_fctr <- ifelse(mydata_raw$Gender == "1", "F", "M")
-mydata_raw$Gender_fctr <- factor(mydata_raw$Gender_fctr) 
+# Factoring variables for regression models
 
-mydata_raw$Liver.Diagnosis_fctr <- ifelse(mydata_raw$Liver.Diagnosis == "1", "Hep C", 
-                                     ifelse(mydata_raw$Liver.Diagnosis == "2", "Hep B", 
-                                            ifelse(mydata_raw$Liver.Diagnosis == "3", "PSC/PBC/AHA", 
-                                                   ifelse(mydata_raw$Liver.Diagnosis == "4", "Alcohol", "Other"))))
-mydata_raw$Liver.Diagnosis_fctr <- factor(mydata_raw$Liver.Diagnosis_fctr, levels = c("Hep C", "Hep B", "PSC/PBC/AHA", "Alcohol", "Other")) 
+# Factoring gender, F = 1
+mydata_imp$Gender_fctr <- factor(mydata_imp$Gender, levels = c(0, 1), labels = c("Male", "Female")) 
 
-mydata_raw$Rejection.graft.dysfunction_fctr <- factor(mydata_raw$Rejection.graft.dysfunction, levels = c(0, 1), labels = c("N", "Y")) 
+# Factoring liver diagnosis, setting levels to reset order of bins 
+mydata_imp$Liver.Diagnosis_fctr <- ifelse(mydata_imp$Liver.Diagnosis == "1", "Hep C", 
+                                     ifelse(mydata_imp$Liver.Diagnosis == "2", "Hep B", 
+                                            ifelse(mydata_imp$Liver.Diagnosis == "3", "PSC/PBC/AHA", 
+                                                   ifelse(mydata_imp$Liver.Diagnosis == "4", "Alcohol", "Other"))))
+mydata_imp$Liver.Diagnosis_fctr <- factor(mydata_imp$Liver.Diagnosis_fctr, levels = c("Hep C", "Hep B", "PSC/PBC/AHA", "Alcohol", "Other")) 
 
-mydata_raw$Recurrence.of.disease_fctr  <- factor(mydata_raw$Recurrence.of.disease, levels = c(0, 1), labels = c("N", "Y")) 
+# Factoring graft rejection, Y = 1
+mydata_imp$Rejection.graft.dysfunction_fctr <- factor(mydata_imp$Rejection.graft.dysfunction, levels = c(0, 1), labels = c("N", "Y")) 
 
-mydata_raw$Any.fibrosis_fctr  <- factor(mydata_raw$Any.fibrosis, levels = c(0, 1), labels = c("N", "Y")) 
+# Factoring graft rejection, Y = 1
+mydata_imp$Recurrence.of.disease_fctr  <- factor(mydata_imp$Recurrence.of.disease, levels = c(0, 1), labels = c("N", "Y")) 
 
-mydata_raw$Renal.Failure_fctr <- factor(mydata_raw$Renal.Failure, levels = c(0, 1), labels = c("N", "Y")) 
+# Factoring fibrosis, Y = 1
+mydata_imp$Any.fibrosis_fctr  <- factor(mydata_imp$Any.fibrosis, levels = c(0, 1), labels = c("N", "Y")) 
 
-mydata_raw$Depression_fctr <- factor(mydata_raw$Depression, levels = c(0, 1), labels = c("N", "Y")) 
+# Factoring renal failure, Y = 1
+mydata_imp$Renal.Failure_fctr <- factor(mydata_imp$Renal.Failure, levels = c(0, 1), labels = c("N", "Y")) 
 
-mydata_raw$Corticoid_fctr <- factor(mydata_raw$Corticoid, levels = c(0, 1), labels = c("N", "Y")) 
+# Factoring depression, Y = 1
+mydata_imp$Depression_fctr <- factor(mydata_imp$Depression, levels = c(0, 1), labels = c("N", "Y")) 
 
-mydata_fct <- mydata_raw %>%
+# Factoring corticoid, Y = 1
+mydata_imp$Corticoid_fctr <- factor(mydata_imp$Corticoid, levels = c(0, 1), labels = c("N", "Y")) 
+
+# Converting clinical testing scales into binary variables 
+
+# For PSQI <- >4 == DISTURBANCE (1 = TRUE)
+# For ESS <- >10 == DISTURBANCE (1 = TRUE)
+# For AIS <- >5 == DISTURBANCE (1 = TRUE)
+# For BSS <- i == 1 == DISTURBANCE (TRUE)
+
+mydata_imp$Pittsburgh.Sleep.Quality.Index.Score <- ifelse(mydata_imp$Pittsburgh.Sleep.Quality.Index.Score > 4, 1, 0)
+
+mydata_imp$Epworth.Sleepiness.Scale <- ifelse(mydata_imp$Epworth.Sleepiness.Scale > 10, 1, 0)
+
+mydata_imp$Athens.Insomnia.Scale<- ifelse(mydata_imp$Athens.Insomnia.Scale > 5, 1, 0)
+
+# Saving factored variables as new data frame
+mydata_fct <- mydata_imp %>%
   dplyr::select(gender.fctr = Gender_fctr, age = Age, BMI, time.transplant = Time.from.transplant, 
          liver.diagnosis.fctr = Liver.Diagnosis_fctr, disease.recurrence.fctr = Recurrence.of.disease_fctr, 
          graft.rejection.dys.fctr = Rejection.graft.dysfunction_fctr, fibrosis.fctr = Any.fibrosis_fctr, renal.failure.fctr = Renal.Failure_fctr, 
@@ -202,19 +252,21 @@ mydata_fct <- mydata_raw %>%
          pittsburgh.quality.score = Pittsburgh.Sleep.Quality.Index.Score, athens.insomnia.scale = Athens.Insomnia.Scale, 
          berlin.sleep.scale = Berlin.Sleepiness.Scale, SF36.PCS, SF36.MCS)
 
-
-
+# Exploratory analysis post-factoring (for report) 
 basic_eda(mydata_fct)
+
 
 # --------------------------------------------------------------------------------
 
-# PSQI estimate
+#################################
+### Prevalence Estimates ########
+#################################
 
 # Calculate the number of patients with poor sleep quality
-psqi_poor_sleep <- length(which(mydata_fct$pittsburgh.quality.score > 4))
+psqi_poor_sleep <- length(which(mydata_num$pittsburgh.quality.score > 4))
 
 # Calculate the total number of observations
-total_psqi_observations <- length(which(!is.na(mydata_fct$pittsburgh.quality.score)))
+total_psqi_observations <- length(which(!is.na(mydata_num$pittsburgh.quality.score)))
 
 # Calculate the prevalence of sleep disturbance
 psqi_prevalence_poor_sleep <- psqi_poor_sleep / total_psqi_observations
@@ -225,10 +277,10 @@ cat("PSQI Prevalence of Sleep Disturbance:", psqi_prevalence_poor_sleep, "\n")
 # ESS estimate
 
 # Calculate the number of patients with poor sleep quality
-ess_poor_sleep <- length(which(mydata_fct$epworth.sleep.scale > 10))
+ess_poor_sleep <- length(which(mydata_num$epworth.sleep.scale > 10))
 
 # Calculate the total number of observations
-total_ess_observations <- length(which(!is.na(mydata_fct$epworth.sleep.scale)))
+total_ess_observations <- length(which(!is.na(mydata_num$epworth.sleep.scale)))
 
 # Calculate the prevalence of sleep disturbance
 ess_prevalence_poor_sleep <- ess_poor_sleep / total_ess_observations
@@ -239,7 +291,7 @@ cat("ESS Prevalence of Sleep Disturbance:", ess_prevalence_poor_sleep, "\n")
 # BSS estimate
 
 # Calculate the number of patients with poor sleep quality
-bss_poor_sleep <- length(which(mydata_fct$berlin.sleep.scale == 1))
+bss_poor_sleep <- length(which(mydata_num$berlin.sleep.scale == 1))
 
 # Calculate the total number of observations
 total_bss_observations <- length(which(!is.na(mydata_fct$berlin.sleep.scale)))
@@ -264,53 +316,44 @@ ais_prevalence_poor_sleep <- ais_poor_sleep / total_ais_observations
 # Print the prevalence
 cat("AIS Prevalence of Sleep Disturbance:", ais_prevalence_poor_sleep, "\n")
 
-# --------------------------------------------------------------------------------
-
-# Converting clinical testing scales into binary variables 
-
-# For PSQI <- >4 == DISTURBANCE (1 = TRUE)
-# For ESS <- >10 == DISTURBANCE (1 = TRUE)
-# For AIS <- >5 == DISTURBANCE (TRUE)
-# For BSS <- == 1 == DISTURBANCE (TRUE)
-
-mydata_fct$pittsburgh.quality.score <- ifelse(mydata_fct$pittsburgh.quality.score > 4, 1, 0)
-
-mydata_fct$epworth.sleep.scale <- ifelse(mydata_fct$epworth.sleep.scale > 10, 1, 0)
-
-mydata_fct$athens.insomnia.scale <- ifelse(mydata_fct$athens.insomnia.scale > 5, 1, 0)
-
 
 # --------------------------------------------------------------------------------
 
-# Making model dataset
-mydata_fct3 <- na.omit(mydata_fct)
+#################################
+### Regression Models ###########
+#################################
 
-mydata_fct2 <- mydata_fct %>%
+mydata_scales <- mydata_fct %>%
   dplyr::select(-SF36.PCS, -SF36.MCS)
 
-# Omitting NAs (check) 
-mydata_scales <- na.omit(mydata_fct2)
+# Calculating number of predictors (degrees of freedom) available for each model
+epworth_pred <- pred_limit(mydata_scales, "epworth.sleep.scale")
+epworth_pred
+# Epworth model has a limit of 4.6 degrees of freedom, rounding to 5
 
-# Calculating number of predictors (degrees of freedom) available 
-epworth_pred <- 69/15
-epworth_pred 
-
-pittsburgh_pred <- 87/15
+pittsburgh_pred <- pred_limit(mydata_scales, "pittsburgh.quality.score")
 pittsburgh_pred
+# Pittsburgh model has a limit of 5.8 degrees of freedom, rounding to 6
 
-athens_pred <- 117/15
+athens_pred <- pred_limit(mydata_scales, "athens.insomnia.scale")
 athens_pred 
+# Athens model has a limit of 7.8 degrees of freedom, rounding to 8
 
-berlin_pred <- 105/15
+berlin_pred<- pred_limit(mydata_scales, "berlin.sleep.scale")
 berlin_pred
+# Berlin model has a limit of 7 degrees of freedom
 
-# MAKING NEW DATASET FOR LOG MODELS 
-mydata_fct4 <- mydata_fct3
-mydata_fct4$liver.diagnosis.fctr <- ifelse(mydata_fct4$liver.diagnosis.fctr == "Hep C", 1, 0)
+# Compressing liver diagnosis to 1 degree of freedom (previously 4), 
+# According to literature findings, Hep C diagnosis is of specific interest 
+# when it comes to sleep impacts. 
+mydata_scales$liver.diagnosis.fctr <- ifelse(mydata_scales$liver.diagnosis.fctr == "Hep C", 1, 0)
 
-##########################
-### PITTS ################
-##########################
+
+# --------------------------------------------------------------------------------
+
+#####################################
+### PITTSBURGH MODEL ################
+#####################################
 
 # Making full model for stepwise 
 pitts_model_full <- glm(pittsburgh.quality.score~age+gender.fctr+BMI+time.transplant
@@ -319,6 +362,7 @@ pitts_model_full <- glm(pittsburgh.quality.score~age+gender.fctr+BMI+time.transp
                    data = mydata_fct4, family = "binomial")
 
 summary(pitts_model_full)
+# AIC: 309.49
 
 # Making null model for stepwise 
 pitts_model_null <- glm(pittsburgh.quality.score~1, 
@@ -328,24 +372,26 @@ pitts_model_null <- glm(pittsburgh.quality.score~1,
 pitts_model_full.step.back <- stepAIC(pitts_model_full, direction = "backward", trace = F)
 
 summary(pitts_model_full.step.back)
-# glm(formula = pittsburgh.quality.score ~ gender.fctr + time.transplant + 
-  #     disease.recurrence.fctr + fibrosis.fctr + renal.failure.fctr + 
-    #   depression.fctr, family = "binomial", data = mydata_fct4)
+# AIC: 302.93
 
 # Conducting stepwise forward 
 pitts_model_full.step.for <- stepAIC(pitts_model_null, direction = "forward", trace = F, scope = list(upper=pitts_model_full, lower=pitts_model_null))
 
 summary(pitts_model_full.step.for)
-# SAME AS BACK
+# Model has same predictors as backwards model
+# AIC: 302.93 <- same AIC as forward stepwise model 
 
-# manual/literature model
+# Literature model based on predictors of interest from literature review
 pitts_model_lit <- glm(pittsburgh.quality.score~time.transplant+BMI+
                          depression.fctr+gender.fctr+liver.diagnosis.fctr,
                        data = mydata_fct4, family = binomial)
 
 summary(pitts_model_lit)
+# AIC: 315.38
+# Currently at 5 degrees of freedom 
 
-# ADDING A VARIABLE BECAUSE WE CAN (FOR RULE OF THUMB) 
+# Hybridising model wit 
+
 # including significant variables from stepwise approach, doing so because we have available degrees of freedom 
 pitts_model_hybrid <- glm(pittsburgh.quality.score~time.transplant+BMI+
                          depression.fctr+gender.fctr+liver.diagnosis.fctr+disease.recurrence.fctr,
