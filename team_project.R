@@ -294,7 +294,7 @@ cat("ESS Prevalence of Sleep Disturbance:", ess_prevalence_poor_sleep, "\n")
 bss_poor_sleep <- length(which(mydata_num$berlin.sleep.scale == 1))
 
 # Calculate the total number of observations
-total_bss_observations <- length(which(!is.na(mydata_fct$berlin.sleep.scale)))
+total_bss_observations <- length(which(!is.na(mydata_num$berlin.sleep.scale)))
 
 # Calculate the prevalence of sleep disturbance
 bss_prevalence_poor_sleep <- bss_poor_sleep / total_bss_observations
@@ -305,10 +305,10 @@ cat("BSS Prevalence of Sleep Disturbance:", bss_prevalence_poor_sleep, "\n")
 # AIS estimate
 
 # Calculate the number of patients with poor sleep quality
-ais_poor_sleep <- length(which(mydata_fct$athens.insomnia.scale > 5))
+ais_poor_sleep <- length(which(mydata_num$athens.insomnia.scale > 5))
 
 # Calculate the total number of observations
-total_ais_observations <- length(which(!is.na(mydata_fct$athens.insomnia.scale)))
+total_ais_observations <- length(which(!is.na(mydata_num$athens.insomnia.scale)))
 
 # Calculate the prevalence of sleep disturbance
 ais_prevalence_poor_sleep <- ais_poor_sleep / total_ais_observations
@@ -327,13 +327,13 @@ mydata_scales <- mydata_fct %>%
   dplyr::select(-SF36.PCS, -SF36.MCS)
 
 # Calculating number of predictors (degrees of freedom) available for each model
-epworth_pred <- pred_limit(mydata_scales, "epworth.sleep.scale")
-epworth_pred
-# Epworth model has a limit of 4.6 degrees of freedom, rounding to 5
-
 pittsburgh_pred <- pred_limit(mydata_scales, "pittsburgh.quality.score")
 pittsburgh_pred
 # Pittsburgh model has a limit of 5.8 degrees of freedom, rounding to 6
+
+epworth_pred <- pred_limit(mydata_scales, "epworth.sleep.scale")
+epworth_pred
+# Epworth model has a limit of 4.6 degrees of freedom, rounding to 5
 
 athens_pred <- pred_limit(mydata_scales, "athens.insomnia.scale")
 athens_pred 
@@ -355,7 +355,7 @@ mydata_scales$liver.diagnosis.fctr <- ifelse(mydata_scales$liver.diagnosis.fctr 
 ### PITTSBURGH MODEL ################
 #####################################
 
-# Making full model for stepwise 
+# Making full model for Pittsburgh
 pitts_model_full <- glm(pittsburgh.quality.score~age+gender.fctr+BMI+time.transplant
                    +liver.diagnosis.fctr+disease.recurrence.fctr+graft.rejection.dys.fctr
                    +fibrosis.fctr+renal.failure.fctr+depression.fctr+corticoid.fctr, 
@@ -384,20 +384,21 @@ summary(pitts_model_full.step.for)
 # Literature model based on predictors of interest from literature review
 pitts_model_lit <- glm(pittsburgh.quality.score~time.transplant+BMI+
                          depression.fctr+gender.fctr+liver.diagnosis.fctr,
-                       data = mydata_fct4, family = binomial)
+                       data = mydata_scales, family = binomial)
 
 summary(pitts_model_lit)
 # AIC: 315.38
-# Currently at 5 degrees of freedom 
+# Currently at 5 degrees of freedom, m/15 gives limit of 6 degrees
 
-# Hybridising model wit 
-
-# including significant variables from stepwise approach, doing so because we have available degrees of freedom 
+# Hybridizing model with sample-specific predictors
+# Including significant variables from stepwise approach, doing so because 
+# we have available degrees of freedom and can reduce AIC. Adding disease recurrence as predictor
 pitts_model_hybrid <- glm(pittsburgh.quality.score~time.transplant+BMI+
                          depression.fctr+gender.fctr+liver.diagnosis.fctr+disease.recurrence.fctr,
-                       data = mydata_fct4, family = binomial)
+                       data = mydata_scales, family = binomial)
 
 summary(pitts_model_hybrid)
+# AIC: 306.05
 
 # --------------------------------------------------------------------------------
 
@@ -405,13 +406,14 @@ summary(pitts_model_hybrid)
 ### Epworth ##############
 ##########################
 
-# Making full model for stepwise (Epworth)
+# Making full model for Epworth
 epworth_model_full <- glm(epworth.sleep.scale~age+gender.fctr+BMI+time.transplant
                         +liver.diagnosis.fctr+disease.recurrence.fctr+graft.rejection.dys.fctr
                         +fibrosis.fctr+renal.failure.fctr+depression.fctr+corticoid.fctr, 
                         data = mydata_scales, family = "binomial")
 
 summary(epworth_model_full)
+# AIC: 311.72
 
 # Making null model for stepwise 
 epworth_model_null <- glm(epworth.sleep.scale~1, 
@@ -424,7 +426,7 @@ summary(epworth_model_full.step.back)
 #' glm(formula = epworth.sleep.scale ~ gender.fctr + disease.recurrence.fctr + 
 #' renal.failure.fctr + depression.fctr + corticoid.fctr, family = "binomial", 
 #' data = mydata_scales)
-#' # AIC: 301.06
+#' AIC: 301.06
 
 
 # Conducting stepwise forward 
