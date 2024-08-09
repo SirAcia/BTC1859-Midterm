@@ -534,7 +534,8 @@ vif(athens_model_lit)
 athens_model_hybrid <- glm(athens.insomnia.scale~time.transplant+BMI+
                           depression.fctr+gender.fctr+liver.diagnosis.fctr+corticoid.fctr+
                           disease.recurrence.fctr,
-                        data = mydata_scales, family = binomial)
+                          data = mydata_scales, family = binomial)
+
 
 summary(athens_model_hybrid)
 # AIC: 362.92
