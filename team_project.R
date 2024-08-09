@@ -1,6 +1,5 @@
-# Team project
-# Mikael Goutama, Zachery Chan, Mausam ______
-
+# BTC1859 Team project
+# Mikael Goutama, Zachery Chan, Mausam Vadakkayil
 
 library(funModeling) 
 library(Hmisc)
@@ -297,13 +296,14 @@ pitts_model_full.step.for <- stepAIC(pitts_model_null, direction = "forward", tr
 summary(pitts_model_full.step.for)
 # SAME AS BACK
 
-# manual/literature models
+# manual/literature model
 pitts_model_lit <- glm(pittsburgh.quality.score~time.transplant+BMI+
                          depression.fctr+gender.fctr+liver.diagnosis.fctr,
                        data = mydata_fct4, family = binomial)
 
 summary(pitts_model_lit)
 
+<<<<<<< HEAD
 # ADDING A VARIABLE BECAUSE WE CAN (FOR RULE OF THUMB) 
 # including significant variables from stepwise approach, doing so because we have available degrees of freedom 
 pitts_model_hybrid <- glm(pittsburgh.quality.score~time.transplant+BMI+
@@ -311,6 +311,9 @@ pitts_model_hybrid <- glm(pittsburgh.quality.score~time.transplant+BMI+
                        data = mydata_fct4, family = binomial)
 
 summary(pitts_model_hybrid)
+=======
+#' the stepAIC models have lower AIC compared to the literature model
+>>>>>>> 3f01d61c1f887cc9550f7e4cc7fa79baf2964541
 
 # --------------------------------------------------------------------------------
 
@@ -356,6 +359,7 @@ epworth_model_lit <- glm(epworth.sleep.scale~time.transplant+BMI+
 
 summary(epworth_model_lit)
 
+<<<<<<< HEAD
 # Changing high p-value variable 
 epworth_model_hybrid <- glm(epworth.sleep.scale~disease.recurrence.fctr+BMI+
                            depression.fctr+gender.fctr+liver.diagnosis.fctr,
@@ -365,6 +369,9 @@ summary(epworth_model_hybrid)
 # AIC: 304.03
 # Swapped disease recurrence for time.transplant as stepwise had has predictor
 # also 
+=======
+#' the stepAIC models have lower AIC compared to the literature model
+>>>>>>> 3f01d61c1f887cc9550f7e4cc7fa79baf2964541
 
 # --------------------------------------------------------------------------------
 
@@ -405,6 +412,7 @@ athens_model_lit <- glm(athens.insomnia.scale~time.transplant+BMI+
 
 summary(athens_model_lit)
 
+<<<<<<< HEAD
 athens_model_hybrid <- glm(athens.insomnia.scale~disease.recurrence.fctr+time.transplant+BMI+
                           depression.fctr+gender.fctr+liver.diagnosis.fctr+corticoid.fctr,
                         data = mydata_fct4, family = binomial)
@@ -415,6 +423,9 @@ summary(athens_model_hybrid)
 vif(athens_model_lit)
 
 #' the stepAIC methods have lower AIC compared to the literature
+=======
+#' the stepAIC models have lower AIC compared to the literature model
+>>>>>>> 3f01d61c1f887cc9550f7e4cc7fa79baf2964541
 
 # --------------------------------------------------------------------------------
 
@@ -478,6 +489,7 @@ p_values <- coefficients_summary[, "Pr(>|z|)", drop = FALSE]
 
 bon_p <- p.adjust(p_values, method = "bonferroni")
 summary(berlin_model_lit)
+
 
 # --------------------------------------------------------------------------------
 
@@ -626,3 +638,4 @@ cor_ess
 cor_ais
 
 cor_bss
+

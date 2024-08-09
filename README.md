@@ -1,3 +1,5 @@
 # BTC1859-Midterm
 
-# test
+***insert dictionary of files***
+
+*insert general plan/steps performed*
