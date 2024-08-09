@@ -158,7 +158,7 @@ imp_methods <- c(Gender = "",
                  SF36.MCS = "norm.nob")
 
 # As berlin is binary, factoring as using "logreg" method for imputation 
-mydata_raw$Berlin.Sleepiness.Scale <- factor(mydata_raw$Berlin.Sleepiness.Scale, levels = c(0,1), labels = c("N", "Y"))
+mydata_raw$Berlin.Sleepiness.Scale <- factor(mydata_raw$Berlin.Sleepiness.Scale, levels = c(0,1))
 
 # Performing imputation, using seed 32 for random generation 
 imputed_data <- mice(mydata_raw, method = imp_methods, seed = 32, m = 1, print = FALSE)
@@ -167,6 +167,9 @@ imputed_data <- mice(mydata_raw, method = imp_methods, seed = 32, m = 1, print =
 mydata_imp<- complete(imputed_data, 1)
 
 # converting berlin back to numeric 
+mydata_imp$Berlin.Sleepiness.Scale <- as.numeric(mydata_imp$Berlin.Sleepiness.Scale) 
+
+# Recoding berline to match original structure (1 = T) 
 mydata_imp$Berlin.Sleepiness.Scale <- ifelse(mydata_imp$Berlin.Sleepiness.Scale == 2, 1, 0) 
 
 # Rounding to whole numbers for clinical scales
@@ -349,7 +352,12 @@ berlin_pred
 # Compressing liver diagnosis to 1 degree of freedom (previously 4), 
 # According to literature findings, Hep C diagnosis is of specific interest 
 # when it comes to sleep impacts. 
-mydata_scales$liver.diagnosis.fctr <- ifelse(mydata_scales$liver.diagnosis.fctr == "Hep C", 1, 0)
+
+# Converting back liver diagnosis to numeric to reset factor 
+mydata_scales$liver.diagnosis.fctr <- as.numeric(mydata_scales$liver.diagnosis.fctr)
+
+# Converting back to compressed, factored variable
+mydata_scales$liver.diagnosis.fctr <- ifelse(mydata_scales$liver.diagnosis.fctr == 1, 1, 0)
 
 
 # --------------------------------------------------------------------------------
@@ -409,7 +417,7 @@ pitts_model_hybrid <- glm(pittsburgh.quality.score~time.transplant+BMI+
                        data = mydata_scales, family = binomial)
 
 summary(pitts_model_hybrid)
-# AIC: 306.05
+#AIC: 306.05
 
 # Using ANOVA to determine if hybrid model is significantly better 
 anova(pitts_model_lit, pitts_model_hybrid, test = "Chisq")
