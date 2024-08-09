@@ -697,6 +697,7 @@ plot(mydata_clean$pittsburgh.quality.score, mydata_clean$SF36_Avg,
      ylab = "SF36 Average",
      pch = 19)
 abline(lm(SF36_Avg ~ pittsburgh.quality.score, data = mydata_clean), col = "red")
+summary(lm(SF36_Avg ~ pittsburgh.quality.score, data = mydata_clean))
 
 # PSQI against SF36.PCS
 plot(mydata_clean$pittsburgh.quality.score, mydata_clean$SF36.PCS,
@@ -705,6 +706,7 @@ plot(mydata_clean$pittsburgh.quality.score, mydata_clean$SF36.PCS,
      ylab = "SF36 PCS",
      pch = 19)
 abline(lm(SF36.PCS ~ pittsburgh.quality.score, data = mydata_clean), col = "red")
+summary(lm(SF36.PCS ~ pittsburgh.quality.score, data = mydata_clean))
 
 # PSQI against SF36.MCS
 plot(mydata_clean$pittsburgh.quality.score, mydata_clean$SF36.MCS,
@@ -713,6 +715,7 @@ plot(mydata_clean$pittsburgh.quality.score, mydata_clean$SF36.MCS,
      ylab = "SF36 MCS",
      pch = 19)
 abline(lm(SF36.MCS ~ pittsburgh.quality.score, data = mydata_clean), col = "red")
+summary(lm(SF36.MCS ~ pittsburgh.quality.score, data = mydata_clean))
 
 
 ### Plot ESS against quality of life average, physical and mental
@@ -724,6 +727,7 @@ plot(mydata_clean$epworth.sleep.scale, mydata_clean$SF36_Avg,
      ylab = "SF36 Average",
      pch = 19)
 abline(lm(SF36_Avg ~ epworth.sleep.scale, data = mydata_clean), col = "blue")
+summary(lm(SF36_Avg ~ epworth.sleep.scale, data = mydata_clean))
 
 # Plot ESS against SF36.PCS
 plot(mydata_clean$epworth.sleep.scale, mydata_clean$SF36.PCS,
@@ -732,6 +736,7 @@ plot(mydata_clean$epworth.sleep.scale, mydata_clean$SF36.PCS,
      ylab = "SF36.PCS",
      pch = 19)
 abline(lm(SF36.PCS ~ epworth.sleep.scale, data = mydata_clean), col = "blue")
+summary(lm(SF36.PCS ~ epworth.sleep.scale, data = mydata_clean))
 
 # Plot ESS against SF36.MCS 
 plot(mydata_clean$epworth.sleep.scale, mydata_clean$SF36.MCS,
@@ -740,6 +745,7 @@ plot(mydata_clean$epworth.sleep.scale, mydata_clean$SF36.MCS,
      ylab = "SF36.MCS",
      pch = 19)
 abline(lm(SF36.MCS ~ epworth.sleep.scale, data = mydata_clean), col = "blue")
+summary(lm(SF36.MCS ~ epworth.sleep.scale, data = mydata_clean))
 
 ### Plot AIS against quality of life average, physical and mental
 
@@ -750,6 +756,7 @@ plot(mydata_clean$athens.insomnia.scale, mydata_clean$SF36_Avg,
      ylab = "SF36 Average",
      pch = 19)
 abline(lm(SF36_Avg ~ athens.insomnia.scale, data = mydata_clean), col = "green")
+summary(lm(SF36_Avg ~ athens.insomnia.scale, data = mydata_clean))
 
 # Plot AIS against SF36.PCS 
 plot(mydata_clean$athens.insomnia.scale, mydata_clean$SF36.PCS,
@@ -758,6 +765,7 @@ plot(mydata_clean$athens.insomnia.scale, mydata_clean$SF36.PCS,
      ylab = "SF36.PCS",
      pch = 19)
 abline(lm(SF36.PCS ~ athens.insomnia.scale, data = mydata_clean), col = "green")
+summary(lm(SF36.PCS ~ athens.insomnia.scale, data = mydata_clean))
 
 # Plot AIS against SF36.MCS 
 plot(mydata_clean$athens.insomnia.scale, mydata_clean$SF36.MCS,
@@ -766,6 +774,7 @@ plot(mydata_clean$athens.insomnia.scale, mydata_clean$SF36.MCS,
      ylab = "SF36.MCS",
      pch = 19)
 abline(lm(SF36.MCS ~ athens.insomnia.scale, data = mydata_clean), col = "green")
+summary(lm(SF36.MCS ~ athens.insomnia.scale, data = mydata_clean))
 
 ### Plot BSS against quality of life average.  
 
@@ -776,6 +785,7 @@ plot(mydata_clean$berlin.sleep.scale, mydata_clean$SF36_Avg,
      ylab = "SF36 Average",
      pch = 19)
 abline(lm(SF36_Avg ~ berlin.sleep.scale, data = mydata_clean), col = "purple")
+summary(lm(SF36_Avg ~ berlin.sleep.scale, data = mydata_clean))
 
 # Box plot for BSS vs SF36 Average
 boxplot(SF36_Avg ~ berlin.sleep.scale, data = mydata_clean,
