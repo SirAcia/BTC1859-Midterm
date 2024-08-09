@@ -157,19 +157,22 @@ imp_methods <- c(Gender = "",
                  SF36.PCS = "norm.nob",
                  SF36.MCS = "norm.nob")
 
+# As berlin is binary, factoring as using "logreg" method for imputation 
+mydata_raw$Berlin.Sleepiness.Scale <- factor(mydata_raw$Berlin.Sleepiness.Scale, levels = c(0,1), labels = c("N", "Y"))
+
 # Performing imputation, using seed 32 for random generation 
 imputed_data <- mice(mydata_raw, method = imp_methods, seed = 32, m = 1, print = FALSE)
 
 # Extracting complete data set with imputed values
 mydata_imp<- complete(imputed_data, 1)
 
+# converting berlin back to numeric 
+mydata_imp$Berlin.Sleepiness.Scale <- ifelse(mydata_imp$Berlin.Sleepiness.Scale == 2, 1, 0) 
+
 # Rounding to whole numbers for clinical scales
 mydata_imp$Epworth.Sleepiness.Scale <- round(mydata_imp$Epworth.Sleepiness.Scale)
 mydata_imp$Pittsburgh.Sleep.Quality.Index.Score <- round(mydata_imp$Pittsburgh.Sleep.Quality.Index.Score)
 mydata_imp$Athens.Insomnia.Scale <- round(mydata_imp$Athens.Insomnia.Scale)
-
-# Binary values for Berlin.Sleepiness.Scale
-mydata_imp$Berlin.Sleepiness.Scale <- ifelse(mydata_imp$Berlin.Sleepiness.Scale >= 0.5, 1, 0)
 
 # Exploratory analysis post-imputation
 glimpse(mydata_imp)
