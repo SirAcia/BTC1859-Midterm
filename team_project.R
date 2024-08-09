@@ -166,11 +166,17 @@ imputed_data <- mice(mydata_raw, method = imp_methods, seed = 32, m = 1, print =
 # Extracting complete data set with imputed values
 mydata_imp<- complete(imputed_data, 1)
 
-# converting berlin back to numeric 
+# converting Berlin back to numeric 
 mydata_imp$Berlin.Sleepiness.Scale <- as.numeric(mydata_imp$Berlin.Sleepiness.Scale) 
 
-# Recoding berline to match original structure (1 = T) 
+# Recoding Berlin to match original structure (1 = T) 
 mydata_imp$Berlin.Sleepiness.Scale <- ifelse(mydata_imp$Berlin.Sleepiness.Scale == 2, 1, 0) 
+
+# Some values in Pittsburgh are negative (previous NAs, now negative with imputation)
+which(mydata_imp$Pittsburgh.Sleep.Quality.Index.Score <0)
+
+# Recoding imputed negatives as 0 
+mydata_imp$Pittsburgh.Sleep.Quality.Index.Score[mydata_imp$Pittsburgh.Sleep.Quality.Index.Score <0] <- 0
 
 # Rounding to whole numbers for clinical scales
 mydata_imp$Epworth.Sleepiness.Scale <- round(mydata_imp$Epworth.Sleepiness.Scale)
