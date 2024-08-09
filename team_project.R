@@ -631,22 +631,26 @@ vif(berlin_model_hybrid)
 
 # --------------------------------------------------------------------------------
 
-###############################################
-### Correlation With Quality of Life ##########
-###############################################
+##########################
+### Correlation ##########
+##########################
+
+library(corrplot)
 
 # Creating data frame to calculate corr
 corr_data <- mydata_num %>%
   dplyr::select(SF36.PCS, SF36.MCS, berlin.sleep.scale, epworth.sleep.scale, pittsburgh.quality.score, 
                 athens.insomnia.scale)
 
-corr_data_2 <- na.omit(corr_data)
+cor_mat <- cor(corr_data)
 
-cor_mat <- cor(corr_data_2)
-corrplot(cor_mat)
+#Plot sleep disturbance and QOL correlation
+corrplot(cor_mat, type = "upper", method = "number", order = "alphabet", 
+         tl.offset = 2, diag = FALSE)
+mtext("Correlation of Sleep Disturbance with Quality of Life (Mental and Physical)", at=1, line=-0.1, cex=1.5)
 
 
-
+#average SF36.PCS and SF36.MCS
 mydata_num$SF36_Avg <- rowMeans(mydata_num[ ,c("SF36.PCS", "SF36.MCS")])
 
 mydata_clean <- mydata_num %>%
@@ -656,112 +660,7 @@ mydata_clean <- mydata_num %>%
            !is.na(berlin.sleep.scale) &
            !is.na(SF36_Avg))
 
-
-# Plotting the PSQI and SFF
-
-#mydata_psqi_sf36 <- subset(mydata_num, !is.na(pittsburgh.quality.score) & !is.na(SF36_Avg), 
-#select = c(pittsburgh.quality.score, SF36_Avg))
-
-# Plot PSQI against quality of life
-
-# Plot PSQI against SF36_Avg 
-plot(mydata_clean$pittsburgh.quality.score, mydata_clean$SF36_Avg,
-     main = "PSQI vs SF36 Average",
-     xlab = "PSQI Score",
-     ylab = "SF36 Average",
-     pch = 19)
-abline(lm(SF36_Avg ~ pittsburgh.quality.score, data = mydata_clean), col = "red")
-
-# PSQI against SF36.PCS
-plot(mydata_clean$pittsburgh.quality.score, mydata_clean$SF36.PCS,
-     main = "PSQI vs SF36 PCS",
-     xlab = "PSQI Score",
-     ylab = "SF36 PCS",
-     pch = 19)
-abline(lm(SF36.PCS ~ pittsburgh.quality.score, data = mydata_clean), col = "red")
-
-# PSQI against SF36.MCS
-plot(mydata_clean$pittsburgh.quality.score, mydata_clean$SF36.MCS,
-     main = "PSQI vs SF36 MCS",
-     xlab = "PSQI Score",
-     ylab = "SF36 MCS",
-     pch = 19)
-abline(lm(SF36.MCS ~ pittsburgh.quality.score, data = mydata_clean), col = "red")
-
-
-# Plot ESS against quality of life
-
-# Plot ESS against SF36_Avg 
-plot(mydata_clean$epworth.sleep.scale, mydata_clean$SF36_Avg,
-     main = "ESS vs SF36 Average",
-     xlab = "ESS Score",
-     ylab = "SF36 Average",
-     pch = 19)
-abline(lm(SF36_Avg ~ epworth.sleep.scale, data = mydata_clean), col = "blue")
-
-# Plot ESS against SF36.PCS
-plot(mydata_clean$epworth.sleep.scale, mydata_clean$SF36.PCS,
-     main = "ESS vs SF36.PCS",
-     xlab = "ESS Score",
-     ylab = "SF36.PCS",
-     pch = 19)
-abline(lm(SF36.PCS ~ epworth.sleep.scale, data = mydata_clean), col = "blue")
-
-# Plot ESS against SF36.MCS 
-plot(mydata_clean$epworth.sleep.scale, mydata_clean$SF36.MCS,
-     main = "ESS vs SF36.MCS",
-     xlab = "ESS Score",
-     ylab = "SF36.MCS",
-     pch = 19)
-abline(lm(SF36.MCS ~ epworth.sleep.scale, data = mydata_clean), col = "blue")
-
-# Plot AIS against quality of life
-
-# Plot AIS against SF36_Avg 
-plot(mydata_clean$athens.insomnia.scale, mydata_clean$SF36_Avg,
-     main = "AIS vs SF36 Average",
-     xlab = "AIS Score",
-     ylab = "SF36 Average",
-     pch = 19)
-abline(lm(SF36_Avg ~ athens.insomnia.scale, data = mydata_clean), col = "green")
-
-# Plot AIS against SF36.PCS 
-plot(mydata_clean$athens.insomnia.scale, mydata_clean$SF36.PCS,
-     main = "AIS vs SF36.PCS",
-     xlab = "AIS Score",
-     ylab = "SF36.PCS",
-     pch = 19)
-abline(lm(SF36.PCS ~ athens.insomnia.scale, data = mydata_clean), col = "green")
-
-# Plot AIS against SF36.MCS 
-plot(mydata_clean$athens.insomnia.scale, mydata_clean$SF36.MCS,
-     main = "AIS vs SF36.MCS",
-     xlab = "AIS Score",
-     ylab = "SF36.MCS",
-     pch = 19)
-abline(lm(SF36.MCS ~ athens.insomnia.scale, data = mydata_clean), col = "green")
-
-# Plot BSS against quality of life
-
-# Plot BSS against SF36_Avg 
-plot(mydata_clean$berlin.sleep.scale, mydata_clean$SF36_Avg,
-     main = "BSS vs SF36 Average",
-     xlab = "BSS Score",
-     ylab = "SF36 Average",
-     pch = 19)
-abline(lm(SF36_Avg ~ berlin.sleep.scale, data = mydata_clean), col = "purple")
-
-# Box plot for BSS vs SF36 Average
-boxplot(SF36_Avg ~ berlin.sleep.scale, data = mydata_clean,
-        main = "BSS vs SF36 Average",
-        xlab = "BSS (0 = No Disturbance, 1 = Disturbance)",
-        ylab = "SF36 Average",
-        col = c("lightblue", "lightgreen"))
-
-lm(SF36_Avg ~ berlin.sleep.scale+epworth.sleep.scale+pittsburgh.quality.score+athens.insomnia.scale, data = mydata_clean)
-
-
-# Calculate correlations using cor.test
+# Calculate correlations of SF36_avg and sleep disturbance using cor.test
 cor_psqi <- cor.test(mydata_clean$pittsburgh.quality.score, mydata_clean$SF36_Avg, method = "pearson")
 cor_ess <- cor.test(mydata_clean$epworth.sleep.scale, mydata_clean$SF36_Avg, method = "pearson")
 cor_ais <- cor.test(mydata_clean$athens.insomnia.scale, mydata_clean$SF36_Avg, method = "pearson")
@@ -774,4 +673,114 @@ cor_ess
 cor_ais
 
 cor_bss
+
+#plot correlation of SF36_average and sleep disturbance
+corr_data_avg <- mydata_num %>%
+  dplyr::select(SF36_Avg, berlin.sleep.scale, epworth.sleep.scale, pittsburgh.quality.score, 
+                athens.insomnia.scale)
+
+corr_avg <- cor(corr_data_avg)
+corrplot(corr_avg, type = "upper", method = "number", order = "alphabet", 
+         tl.offset = 2, diag = FALSE)
+mtext("Correlation of Sleep Disturbance with Quality of Life (Average)", at=1, line=-0.1, cex=1.5)
+
+
+### Plot PSQI against SF36 average, physical and mental
+
+# Plot PSQI against SF36_Avg 
+plot(mydata_clean$pittsburgh.quality.score, mydata_clean$SF36_Avg,
+     main = "PSQI vs SF36 Average",
+     xlab = "PSQI Score",
+     ylab = "SF36 Average",
+     pch = 19)
+abline(lm(SF36_Avg ~ pittsburgh.quality.score, data = mydata_clean), col = "red")
+
+# PSQI against SF36.PCS
+plot(mydata_clean$pittsburgh.quality.score, mydata_clean$SF36.PCS,
+     main = "PSQI vs SF36_PCS",
+     xlab = "PSQI Score",
+     ylab = "SF36 PCS",
+     pch = 19)
+abline(lm(SF36.PCS ~ pittsburgh.quality.score, data = mydata_clean), col = "red")
+
+# PSQI against SF36.MCS
+plot(mydata_clean$pittsburgh.quality.score, mydata_clean$SF36.MCS,
+     main = "PSQI vs SF36_MCS",
+     xlab = "PSQI Score",
+     ylab = "SF36 MCS",
+     pch = 19)
+abline(lm(SF36.MCS ~ pittsburgh.quality.score, data = mydata_clean), col = "red")
+
+
+### Plot ESS against quality of life average, physical and mental
+
+# Plot ESS against SF36_Avg 
+plot(mydata_clean$epworth.sleep.scale, mydata_clean$SF36_Avg,
+     main = "ESS vs SF36_Average",
+     xlab = "ESS Score",
+     ylab = "SF36 Average",
+     pch = 19)
+abline(lm(SF36_Avg ~ epworth.sleep.scale, data = mydata_clean), col = "blue")
+
+# Plot ESS against SF36.PCS
+plot(mydata_clean$epworth.sleep.scale, mydata_clean$SF36.PCS,
+     main = "ESS vs SF36_PCS",
+     xlab = "ESS Score",
+     ylab = "SF36.PCS",
+     pch = 19)
+abline(lm(SF36.PCS ~ epworth.sleep.scale, data = mydata_clean), col = "blue")
+
+# Plot ESS against SF36.MCS 
+plot(mydata_clean$epworth.sleep.scale, mydata_clean$SF36.MCS,
+     main = "ESS vs SF36_MCS",
+     xlab = "ESS Score",
+     ylab = "SF36.MCS",
+     pch = 19)
+abline(lm(SF36.MCS ~ epworth.sleep.scale, data = mydata_clean), col = "blue")
+
+### Plot AIS against quality of life average, physical and mental
+
+# Plot AIS against SF36_Avg 
+plot(mydata_clean$athens.insomnia.scale, mydata_clean$SF36_Avg,
+     main = "AIS vs SF36_Average",
+     xlab = "AIS Score",
+     ylab = "SF36 Average",
+     pch = 19)
+abline(lm(SF36_Avg ~ athens.insomnia.scale, data = mydata_clean), col = "green")
+
+# Plot AIS against SF36.PCS 
+plot(mydata_clean$athens.insomnia.scale, mydata_clean$SF36.PCS,
+     main = "AIS vs SF36_PCS",
+     xlab = "AIS Score",
+     ylab = "SF36.PCS",
+     pch = 19)
+abline(lm(SF36.PCS ~ athens.insomnia.scale, data = mydata_clean), col = "green")
+
+# Plot AIS against SF36.MCS 
+plot(mydata_clean$athens.insomnia.scale, mydata_clean$SF36.MCS,
+     main = "AIS vs SF36_MCS",
+     xlab = "AIS Score",
+     ylab = "SF36.MCS",
+     pch = 19)
+abline(lm(SF36.MCS ~ athens.insomnia.scale, data = mydata_clean), col = "green")
+
+### Plot BSS against quality of life average.  
+
+# Plot BSS against SF36_Avg 
+plot(mydata_clean$berlin.sleep.scale, mydata_clean$SF36_Avg,
+     main = "BSS vs SF36_Average",
+     xlab = "BSS Score",
+     ylab = "SF36 Average",
+     pch = 19)
+abline(lm(SF36_Avg ~ berlin.sleep.scale, data = mydata_clean), col = "purple")
+
+# Box plot for BSS vs SF36 Average
+boxplot(SF36_Avg ~ berlin.sleep.scale, data = mydata_clean,
+        main = "BSS vs SF36_Average",
+        xlab = "BSS (0 = No Disturbance, 1 = Disturbance)",
+        ylab = "SF36 Average",
+        col = c("lightblue", "lightgreen"))
+
+lm(SF36_Avg ~ berlin.sleep.scale+epworth.sleep.scale+pittsburgh.quality.score+athens.insomnia.scale, data = mydata_clean)
+
 
