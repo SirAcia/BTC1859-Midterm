@@ -17,7 +17,7 @@ library(ISLR)
 library(MASS)
 library(dplyr)
 library(car)
-
+library(corrplot)
 
 # --------------------------------------------------------------------------------
 
@@ -319,9 +319,9 @@ cat("AIS Prevalence of Sleep Disturbance:", ais_prevalence_poor_sleep, "\n")
 
 # --------------------------------------------------------------------------------
 
-#################################
-### Regression Models ###########
-#################################
+###########################################
+### Predictor Limits for Models ###########
+###########################################
 
 mydata_scales <- mydata_fct %>%
   dplyr::select(-SF36.PCS, -SF36.MCS)
@@ -352,21 +352,21 @@ mydata_scales$liver.diagnosis.fctr <- ifelse(mydata_scales$liver.diagnosis.fctr 
 # --------------------------------------------------------------------------------
 
 #####################################
-### PITTSBURGH MODEL ################
+### Pittsburgh Model ################
 #####################################
 
 # Making full model for Pittsburgh
 pitts_model_full <- glm(pittsburgh.quality.score~age+gender.fctr+BMI+time.transplant
                    +liver.diagnosis.fctr+disease.recurrence.fctr+graft.rejection.dys.fctr
                    +fibrosis.fctr+renal.failure.fctr+depression.fctr+corticoid.fctr, 
-                   data = mydata_fct4, family = "binomial")
+                   data = mydata_scales, family = "binomial")
 
 summary(pitts_model_full)
 # AIC: 309.49
 
 # Making null model for stepwise 
 pitts_model_null <- glm(pittsburgh.quality.score~1, 
-                   data = mydata_fct4, family = "binomial")
+                   data = mydata_scales, family = "binomial")
 
 # Conducting stepwise backwards 
 pitts_model_full.step.back <- stepAIC(pitts_model_full, direction = "backward", trace = F)
@@ -379,7 +379,11 @@ pitts_model_full.step.for <- stepAIC(pitts_model_null, direction = "forward", tr
 
 summary(pitts_model_full.step.for)
 # Model has same predictors as backwards model
-# AIC: 302.93 <- same AIC as forward stepwise model 
+# AIC: 302.93 <- same AIC as backwards stepwise model 
+
+# Measuring colinearity for stepwise model
+vif(pitts_model_full.step.for)
+# Nothing above 5, so no strong evidence for colinearity
 
 # Literature model based on predictors of interest from literature review
 pitts_model_lit <- glm(pittsburgh.quality.score~time.transplant+BMI+
@@ -389,6 +393,10 @@ pitts_model_lit <- glm(pittsburgh.quality.score~time.transplant+BMI+
 summary(pitts_model_lit)
 # AIC: 315.38
 # Currently at 5 degrees of freedom, m/15 gives limit of 6 degrees
+
+# Measuring colinearity for literature model
+vif(pitts_model_lit)
+# Nothing above 5, so no strong evidence for colinearity
 
 # Hybridizing model with sample-specific predictors
 # Including significant variables from stepwise approach, doing so because 
@@ -400,11 +408,18 @@ pitts_model_hybrid <- glm(pittsburgh.quality.score~time.transplant+BMI+
 summary(pitts_model_hybrid)
 # AIC: 306.05
 
+# Using ANOVA to determine if hybrid model is significantly better 
+anova(pitts_model_lit, pitts_model_hybrid, test = "Chisq")
+
+# Measuring colinearity for hybrid model
+vif(pitts_model_hybrid)
+# Nothing above 5, so no strong evidence for colinearity
+
 # --------------------------------------------------------------------------------
 
-##########################
-### Epworth ##############
-##########################
+################################
+### Epworth Model ##############
+################################
 
 # Making full model for Epworth
 epworth_model_full <- glm(epworth.sleep.scale~age+gender.fctr+BMI+time.transplant
@@ -413,7 +428,7 @@ epworth_model_full <- glm(epworth.sleep.scale~age+gender.fctr+BMI+time.transplan
                         data = mydata_scales, family = "binomial")
 
 summary(epworth_model_full)
-# AIC: 311.72
+# AIC: 307.1
 
 # Making null model for stepwise 
 epworth_model_null <- glm(epworth.sleep.scale~1, 
@@ -423,51 +438,60 @@ epworth_model_null <- glm(epworth.sleep.scale~1,
 epworth_model_full.step.back <- stepAIC(epworth_model_full, direction = "backward", trace = F)
 
 summary(epworth_model_full.step.back)
-#' glm(formula = epworth.sleep.scale ~ gender.fctr + disease.recurrence.fctr + 
-#' renal.failure.fctr + depression.fctr + corticoid.fctr, family = "binomial", 
-#' data = mydata_scales)
-#' AIC: 301.06
-
+#' AIC: 296.99
 
 # Conducting stepwise forward 
 epworth_model_full.step.for <- stepAIC(epworth_model_null, direction = "forward", trace = F, scope = list(upper=epworth_model_full, lower=epworth_model_null))
 
 summary(epworth_model_full.step.for)
-#' AIC of FORWARD IS 301.6, HIGHER, USING BAKCWARDS
+# Model has same predictors as backwards model
+# AIC: 296.99 <- same AIC as backwards stepwise model 
 
-epworth_pred <- 69/15
-epworth_pred 
+# Measuring colinearity for stepwise model
+vif(epworth_model_full.step.for)
+# Nothing above 5, so no strong evidence for colinearity
 
-# manual/literature models
+# Literature model based on predictors of interest from literature review
 epworth_model_lit <- glm(epworth.sleep.scale~time.transplant+BMI+
                            depression.fctr+gender.fctr+liver.diagnosis.fctr,
-                         data = mydata_fct4, family = binomial)
+                         data = mydata_scales, family = binomial)
 
 summary(epworth_model_lit)
+# AIC: 304.28
+# Currently at 5 degrees of freedom, m/15 gives limit of 5 degrees
 
-# Changing high p-value variable 
+# Measuring colinearity for stepwise model
+vif(epworth_model_lit)
+# Nothing above 5, so no strong evidence for colinearity
+
+# Hybridizing model with sample-specific predictors
+# Switching high p-value predictor, transplant time, with disease recurrence as we have hit limit
 epworth_model_hybrid <- glm(epworth.sleep.scale~disease.recurrence.fctr+BMI+
                            depression.fctr+gender.fctr+liver.diagnosis.fctr,
-                         data = mydata_fct4, family = binomial)
+                         data = mydata_scales, family = binomial)
 
 summary(epworth_model_hybrid)
 # AIC: 304.03
-# Swapped disease recurrence for time.transplant as stepwise had has predictor
+
+# Measuring colinearity for stepwise model
+vif(epworth_model_hybrid)
+# Nothing above 5, so no strong evidence for colinearity
+
 
 # --------------------------------------------------------------------------------
 
+###############################
+### Athens Model ##############
+###############################
 
-##########################
-### Athens ##############
-##########################
-
-# Making full model for stepwise (Epworth)
+# Making full model for Athens
 athens_model_full <- glm(athens.insomnia.scale~age+gender.fctr+BMI+time.transplant
                           +liver.diagnosis.fctr+disease.recurrence.fctr+graft.rejection.dys.fctr
                           +fibrosis.fctr+renal.failure.fctr+depression.fctr+corticoid.fctr, 
                           data = mydata_scales, family = "binomial")
 
 summary(athens_model_full)
+# AIC: 366.67
 
 # Making null model for stepwise 
 athens_model_null <- glm(athens.insomnia.scale~1, 
@@ -477,38 +501,56 @@ athens_model_null <- glm(athens.insomnia.scale~1,
 athens_model_full.step.back <- stepAIC(athens_model_full, direction = "backward", trace = F)
 
 summary(athens_model_full.step.back)
-# glm(formula = athens.insomnia.scale ~ disease.recurrence.fctr + 
- #     depression.fctr + corticoid.fctr, family = "binomial", data = mydata_scales)\
+# AIC: 358.9
 
 # Conducting stepwise forward 
 athens_model_full.step.for <- stepAIC(athens_model_null, direction = "forward", trace = F, scope = list(upper=athens_model_full, lower=athens_model_null))
 
 summary(athens_model_full.step.for)
-# SAME AS BACK 
+# Model has same predictors as backwards model
+# AIC: 358.9 <- same AIC as backwards stepwise model 
 
-# manual/literature models
+# Measuring colinearity for stepwise model
+vif(athens_model_full.step.for)
+# Nothing above 5, so no strong evidence for colinearity
+
+# Literature model based on predictors of interest from literature review
 athens_model_lit <- glm(athens.insomnia.scale~time.transplant+BMI+
                            depression.fctr+gender.fctr+liver.diagnosis.fctr,
-                         data = mydata_fct4, family = binomial)
+                         data = mydata_scales, family = binomial)
 
 summary(athens_model_lit)
+# AIC: 366.51
+# Currently at 5 degrees of freedom, m/15 gives limit of 8 degrees
 
-athens_model_hybrid <- glm(athens.insomnia.scale~disease.recurrence.fctr+time.transplant+BMI+
-                          depression.fctr+gender.fctr+liver.diagnosis.fctr+corticoid.fctr,
+# Measuring colinearity for literature model
+vif(athens_model_lit)
+# Nothing above 5, so no strong evidence for colinearity
+
+# Hybridizing model with sample-specific predictors
+# Including significant variables from stepwise approach, doing so because 
+# we have available degrees of freedom and can reduce AIC. 
+# Adding disease recurrence and corticoid as predictor
+athens_model_hybrid <- glm(athens.insomnia.scale~time.transplant+BMI+
+                          depression.fctr+gender.fctr+liver.diagnosis.fctr+corticoid.fctr+
+                          disease.recurrence.fctr,
                         data = mydata_fct4, family = binomial)
 
 summary(athens_model_hybrid)
+# AIC: 362.92
 
-# Measuring collinearity 
-vif(athens_model_lit)
+# Using ANOVA to determine if hybrid model is significantly better 
+anova(athens_model_lit, athens_model_hybrid, test = "Chisq")
 
-#' the stepAIC methods have lower AIC compared to the literature
+# Measuring colinearity for hybrid model
+vif(athens_model_hybrid)
+# Nothing above 5, so no strong evidence for colinearity
 
 # --------------------------------------------------------------------------------
 
-##########################
-### Berlin ###############
-##########################
+################################
+### Berlin Model ###############
+################################
 
 # Making full model for stepwise 
 berlin_model_full <- glm(berlin.sleep.scale~age+gender.fctr+BMI+time.transplant
@@ -517,6 +559,7 @@ berlin_model_full <- glm(berlin.sleep.scale~age+gender.fctr+BMI+time.transplant
                          data = mydata_scales, family = "binomial")
 
 summary(berlin_model_full)
+# AIC: 331.34
 
 # Making null model for stepwise 
 berlin_model_null <- glm(berlin.sleep.scale~1, 
@@ -535,22 +578,30 @@ summary(berlin_model_full.step.back)
 berlin_model_full.step.for <- stepAIC(berlin_model_null, direction = "forward", trace = F, scope = list(upper=berlin_model_full, lower=berlin_model_null))
 
 summary(berlin_model_full.step.for)
-#'  glm(formula = berlin.sleep.scale ~ BMI + time.transplant + renal.failure.fctr + 
-#'  age, family = "binomial", data = mydata_scales)
 #'  AIC: 321.41
-#'  FORWARD HAS LOWER AIC 
+#'  Forward stepwise has lower AIC, will prefer using forward stepwise model as compared to bakcwards 
 
-# manual/literature models
+# Measuring colinearity for hybrid model
+vif(berlin_model_full.step.for)
+# Nothing above 5, so no strong evidence for colinearity
+
+# Literature model based on predictors of interest from literature review
 berlin_model_lit <- glm(berlin.sleep.scale~time.transplant+BMI+
                              depression.fctr+gender.fctr+liver.diagnosis.fctr,
                            data = mydata_fct4, family = binomial)
 
 summary(berlin_model_lit)
 # AIC: 330.01
+# Currently at 5 degrees of freedom, m/15 gives limit of 7 degrees
 
-berlin_pred <- 105/15
-berlin_pred
+# Measuring colinearity for hybrid model
+vif(berlin_model_lit)
+# Nothing above 5, so no strong evidence for colinearity
 
+# Hybridizing model with sample-specific predictors
+# Including significant variables from stepwise approach, doing so because 
+# we have available degrees of freedom and can reduce AIC. 
+# Adding age and renal failure as predictor
 berlin_model_hybrid <- glm(berlin.sleep.scale~time.transplant+BMI+
                           depression.fctr+gender.fctr+liver.diagnosis.fctr+age+renal.failure.fctr,
                         data = mydata_fct4, family = binomial)
@@ -558,23 +609,19 @@ berlin_model_hybrid <- glm(berlin.sleep.scale~time.transplant+BMI+
 summary(berlin_model_hybrid)
 #AIC: 327.28
 
-model_summary <- summary(berlin_model_hybrid)
+# Using ANOVA to determine if hybrid model is significantly better 
+anova(berlin_model_lit, berlin_model_hybrid, test = "Chisq")
 
-coefficients_summary <- coef(model_summary)
-
-p_values <- coefficients_summary[, "Pr(>|z|)", drop = FALSE]
-
-bon_p <- p.adjust(p_values, method = "bonferroni")
-summary(berlin_model_lit)
+# Measuring colinearity for hybrid model
+vif(berlin_model_hybrid)
+# Nothing above 5, so no strong evidence for colinearity
 
 
 # --------------------------------------------------------------------------------
 
-##########################
-### Correlation ##########
-##########################
-
-library(corrplot)
+###############################################
+### Correlation With Quality of Life ##########
+###############################################
 
 # Creating data frame to calculate corr
 corr_data <- mydata_num %>%
