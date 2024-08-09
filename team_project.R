@@ -482,13 +482,13 @@ vif(epworth_model_lit)
 # Nothing above 5, so no strong evidence for colinearity
 
 # Hybridizing model with sample-specific predictors
-# Switching high p-value predictor, transplant time, with disease recurrence as we have hit limit
-epworth_model_hybrid <- glm(epworth.sleep.scale~disease.recurrence.fctr+BMI+
+# Switching high p-value predictor, transplant time, with corticoid as we have hit limit
+epworth_model_hybrid <- glm(epworth.sleep.scale~corticoid.fctr+BMI+
                            depression.fctr+gender.fctr+liver.diagnosis.fctr,
                          data = mydata_scales, family = binomial)
 
 summary(epworth_model_hybrid)
-# AIC: 304.03
+# AIC: 299.74
 
 # Measuring colinearity for stepwise model
 vif(epworth_model_hybrid)
@@ -656,18 +656,11 @@ mtext("Correlation of Sleep Disturbance with Quality of Life (Mental and Physica
 #average SF36.PCS and SF36.MCS
 mydata_num$SF36_Avg <- rowMeans(mydata_num[ ,c("SF36.PCS", "SF36.MCS")])
 
-mydata_clean <- mydata_num %>%
-  filter(!is.na(epworth.sleep.scale) &
-           !is.na(pittsburgh.quality.score) &
-           !is.na(athens.insomnia.scale) &
-           !is.na(berlin.sleep.scale) &
-           !is.na(SF36_Avg))
-
 # Calculate correlations of SF36_avg and sleep disturbance using cor.test
-cor_psqi <- cor.test(mydata_clean$pittsburgh.quality.score, mydata_clean$SF36_Avg, method = "pearson")
-cor_ess <- cor.test(mydata_clean$epworth.sleep.scale, mydata_clean$SF36_Avg, method = "pearson")
-cor_ais <- cor.test(mydata_clean$athens.insomnia.scale, mydata_clean$SF36_Avg, method = "pearson")
-cor_bss <- cor.test(mydata_clean$berlin.sleep.scale, mydata_clean$SF36_Avg, method = "pearson")
+cor_psqi <- cor.test(mydata_num$pittsburgh.quality.score, mydata_num$SF36_Avg, method = "pearson")
+cor_ess <- cor.test(mydata_num$epworth.sleep.scale, mydata_num$SF36_Avg, method = "pearson")
+cor_ais <- cor.test(mydata_num$athens.insomnia.scale, mydata_num$SF36_Avg, method = "pearson")
+cor_bss <- cor.test(mydata_num$berlin.sleep.scale, mydata_num$SF36_Avg, method = "pearson")
 
 cor_psqi
 
@@ -691,109 +684,109 @@ mtext("Correlation of Sleep Disturbance with Quality of Life (Average)", at=1, l
 ### Plot PSQI against SF36 average, physical and mental
 
 # Plot PSQI against SF36_Avg 
-plot(mydata_clean$pittsburgh.quality.score, mydata_clean$SF36_Avg,
+plot(mydata_num$pittsburgh.quality.score, mydata_num$SF36_Avg,
      main = "PSQI vs SF36 Average",
      xlab = "PSQI Score",
      ylab = "SF36 Average",
      pch = 19)
-abline(lm(SF36_Avg ~ pittsburgh.quality.score, data = mydata_clean), col = "red")
-summary(lm(SF36_Avg ~ pittsburgh.quality.score, data = mydata_clean))
+abline(lm(SF36_Avg ~ pittsburgh.quality.score, data = mydata_num), col = "red")
+summary(lm(SF36_Avg ~ pittsburgh.quality.score, data = mydata_num))
 
 # PSQI against SF36.PCS
-plot(mydata_clean$pittsburgh.quality.score, mydata_clean$SF36.PCS,
+plot(mydata_num$pittsburgh.quality.score, mydata_num$SF36.PCS,
      main = "PSQI vs SF36_PCS",
      xlab = "PSQI Score",
      ylab = "SF36 PCS",
      pch = 19)
-abline(lm(SF36.PCS ~ pittsburgh.quality.score, data = mydata_clean), col = "red")
-summary(lm(SF36.PCS ~ pittsburgh.quality.score, data = mydata_clean))
+abline(lm(SF36.PCS ~ pittsburgh.quality.score, data = mydata_num), col = "red")
+summary(lm(SF36.PCS ~ pittsburgh.quality.score, data = mydata_num))
 
 # PSQI against SF36.MCS
-plot(mydata_clean$pittsburgh.quality.score, mydata_clean$SF36.MCS,
+plot(mydata_num$pittsburgh.quality.score, mydata_num$SF36.MCS,
      main = "PSQI vs SF36_MCS",
      xlab = "PSQI Score",
      ylab = "SF36 MCS",
      pch = 19)
-abline(lm(SF36.MCS ~ pittsburgh.quality.score, data = mydata_clean), col = "red")
-summary(lm(SF36.MCS ~ pittsburgh.quality.score, data = mydata_clean))
+abline(lm(SF36.MCS ~ pittsburgh.quality.score, data = mydata_num), col = "red")
+summary(lm(SF36.MCS ~ pittsburgh.quality.score, data = mydata_num))
 
 
 ### Plot ESS against quality of life average, physical and mental
 
 # Plot ESS against SF36_Avg 
-plot(mydata_clean$epworth.sleep.scale, mydata_clean$SF36_Avg,
+plot(mydata_num$epworth.sleep.scale, mydata_num$SF36_Avg,
      main = "ESS vs SF36_Average",
      xlab = "ESS Score",
      ylab = "SF36 Average",
      pch = 19)
-abline(lm(SF36_Avg ~ epworth.sleep.scale, data = mydata_clean), col = "blue")
-summary(lm(SF36_Avg ~ epworth.sleep.scale, data = mydata_clean))
+abline(lm(SF36_Avg ~ epworth.sleep.scale, data = mydata_num), col = "blue")
+summary(lm(SF36_Avg ~ epworth.sleep.scale, data = mydata_num))
 
 # Plot ESS against SF36.PCS
-plot(mydata_clean$epworth.sleep.scale, mydata_clean$SF36.PCS,
+plot(mydata_num$epworth.sleep.scale, mydata_num$SF36.PCS,
      main = "ESS vs SF36_PCS",
      xlab = "ESS Score",
      ylab = "SF36.PCS",
      pch = 19)
-abline(lm(SF36.PCS ~ epworth.sleep.scale, data = mydata_clean), col = "blue")
-summary(lm(SF36.PCS ~ epworth.sleep.scale, data = mydata_clean))
+abline(lm(SF36.PCS ~ epworth.sleep.scale, data = mydata_num), col = "blue")
+summary(lm(SF36.PCS ~ epworth.sleep.scale, data = mydata_num))
 
 # Plot ESS against SF36.MCS 
-plot(mydata_clean$epworth.sleep.scale, mydata_clean$SF36.MCS,
+plot(mydata_num$epworth.sleep.scale, mydata_num$SF36.MCS,
      main = "ESS vs SF36_MCS",
      xlab = "ESS Score",
      ylab = "SF36.MCS",
      pch = 19)
-abline(lm(SF36.MCS ~ epworth.sleep.scale, data = mydata_clean), col = "blue")
-summary(lm(SF36.MCS ~ epworth.sleep.scale, data = mydata_clean))
+abline(lm(SF36.MCS ~ epworth.sleep.scale, data = mydata_num), col = "blue")
+summary(lm(SF36.MCS ~ epworth.sleep.scale, data = mydata_num))
 
 ### Plot AIS against quality of life average, physical and mental
 
 # Plot AIS against SF36_Avg 
-plot(mydata_clean$athens.insomnia.scale, mydata_clean$SF36_Avg,
+plot(mydata_num$athens.insomnia.scale, mydata_num$SF36_Avg,
      main = "AIS vs SF36_Average",
      xlab = "AIS Score",
      ylab = "SF36 Average",
      pch = 19)
-abline(lm(SF36_Avg ~ athens.insomnia.scale, data = mydata_clean), col = "green")
-summary(lm(SF36_Avg ~ athens.insomnia.scale, data = mydata_clean))
+abline(lm(SF36_Avg ~ athens.insomnia.scale, data = mydata_num), col = "green")
+summary(lm(SF36_Avg ~ athens.insomnia.scale, data = mydata_num))
 
 # Plot AIS against SF36.PCS 
-plot(mydata_clean$athens.insomnia.scale, mydata_clean$SF36.PCS,
+plot(mydata_num$athens.insomnia.scale, mydata_num$SF36.PCS,
      main = "AIS vs SF36_PCS",
      xlab = "AIS Score",
      ylab = "SF36.PCS",
      pch = 19)
-abline(lm(SF36.PCS ~ athens.insomnia.scale, data = mydata_clean), col = "green")
-summary(lm(SF36.PCS ~ athens.insomnia.scale, data = mydata_clean))
+abline(lm(SF36.PCS ~ athens.insomnia.scale, data = mydata_num), col = "green")
+summary(lm(SF36.PCS ~ athens.insomnia.scale, data = mydata_num))
 
 # Plot AIS against SF36.MCS 
-plot(mydata_clean$athens.insomnia.scale, mydata_clean$SF36.MCS,
+plot(mydata_num$athens.insomnia.scale, mydata_num$SF36.MCS,
      main = "AIS vs SF36_MCS",
      xlab = "AIS Score",
      ylab = "SF36.MCS",
      pch = 19)
-abline(lm(SF36.MCS ~ athens.insomnia.scale, data = mydata_clean), col = "green")
-summary(lm(SF36.MCS ~ athens.insomnia.scale, data = mydata_clean))
+abline(lm(SF36.MCS ~ athens.insomnia.scale, data = mydata_num), col = "green")
+summary(lm(SF36.MCS ~ athens.insomnia.scale, data = mydata_num))
 
 ### Plot BSS against quality of life average.  
 
 # Plot BSS against SF36_Avg 
-plot(mydata_clean$berlin.sleep.scale, mydata_clean$SF36_Avg,
+plot(mydata_num$berlin.sleep.scale, mydata_num$SF36_Avg,
      main = "BSS vs SF36_Average",
      xlab = "BSS Score",
      ylab = "SF36 Average",
      pch = 19)
-abline(lm(SF36_Avg ~ berlin.sleep.scale, data = mydata_clean), col = "purple")
-summary(lm(SF36_Avg ~ berlin.sleep.scale, data = mydata_clean))
+abline(lm(SF36_Avg ~ berlin.sleep.scale, data = mydata_num), col = "purple")
+summary(lm(SF36_Avg ~ berlin.sleep.scale, data = mydata_num))
 
 # Box plot for BSS vs SF36 Average
-boxplot(SF36_Avg ~ berlin.sleep.scale, data = mydata_clean,
+boxplot(SF36_Avg ~ berlin.sleep.scale, data = mydata_num,
         main = "BSS vs SF36_Average",
         xlab = "BSS (0 = No Sleep Disturbance, 1 = Sleep Disturbance)",
         ylab = "SF36 Average",
         col = c("lightblue", "lightgreen"))
 
-lm(SF36_Avg ~ berlin.sleep.scale+epworth.sleep.scale+pittsburgh.quality.score+athens.insomnia.scale, data = mydata_clean)
+lm(SF36_Avg ~ berlin.sleep.scale+epworth.sleep.scale+pittsburgh.quality.score+athens.insomnia.scale, data = mydata_num)
 
 
