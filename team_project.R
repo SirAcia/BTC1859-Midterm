@@ -9,6 +9,7 @@ library(mice)
 library(ISLR)
 library(MASS)
 library(dplyr)
+library(car)
 
 # Reading raw data into data frame 
 mydata <- read.csv("./project_data.csv")
@@ -249,6 +250,23 @@ mydata_fct2 <- mydata_fct %>%
 # Omitting NAs (check) 
 mydata_scales <- na.omit(mydata_fct2)
 
+# Calculating number of predictors (degrees of freedom) available 
+epworth_pred <- 69/15
+epworth_pred 
+
+pittsburgh_pred <- 87/15
+pittsburgh_pred
+
+athens_pred <- 117/15
+athens_pred 
+
+berlin_pred <- 105/15
+berlin_pred
+
+# MAKING NEW DATASET FOR LOG MODELS 
+mydata_fct4 <- mydata_fct3
+mydata_fct4$liver.diagnosis.fctr <- ifelse(mydata_fct4$liver.diagnosis.fctr == "Hep C", 1, 0)
+
 ##########################
 ### PITTS ################
 ##########################
@@ -257,48 +275,42 @@ mydata_scales <- na.omit(mydata_fct2)
 pitts_model_full <- glm(pittsburgh.quality.score~age+gender.fctr+BMI+time.transplant
                    +liver.diagnosis.fctr+disease.recurrence.fctr+graft.rejection.dys.fctr
                    +fibrosis.fctr+renal.failure.fctr+depression.fctr+corticoid.fctr, 
-                   data = mydata_scales, family = "binomial")
+                   data = mydata_fct4, family = "binomial")
 
 summary(pitts_model_full)
 
 # Making null model for stepwise 
 pitts_model_null <- glm(pittsburgh.quality.score~1, 
-                   data = mydata_scales, family = "binomial")
+                   data = mydata_fct4, family = "binomial")
 
 # Conducting stepwise backwards 
 pitts_model_full.step.back <- stepAIC(pitts_model_full, direction = "backward", trace = F)
 
 summary(pitts_model_full.step.back)
-#'glm(formula = pittsburgh.quality.score ~ age + gender.fctr + 
-#'disease.recurrence.fctr + renal.failure.fctr + depression.fctr, 
-#'family = "binomial", data = mydata_scales)
+# glm(formula = pittsburgh.quality.score ~ gender.fctr + time.transplant + 
+  #     disease.recurrence.fctr + fibrosis.fctr + renal.failure.fctr + 
+    #   depression.fctr, family = "binomial", data = mydata_fct4)
 
-# Conducting stepwise both
-pitts_model_full.step.both <- stepAIC(pitts_model_full, direction = "both", trace = F)
-
-summary(pitts_model_full.step.both)
-#'glm(formula = pittsburgh.quality.score ~ age + gender.fctr + 
-#'disease.recurrence.fctr + renal.failure.fctr + depression.fctr, 
-#'family = "binomial", data = mydata_scales)
-#'
 # Conducting stepwise forward 
 pitts_model_full.step.for <- stepAIC(pitts_model_null, direction = "forward", trace = F, scope = list(upper=pitts_model_full, lower=pitts_model_null))
 
 summary(pitts_model_full.step.for)
-#'  glm(formula = pittsburgh.quality.score ~ depression.fctr + age + 
-#'   disease.recurrence.fctr + gender.fctr + renal.failure.fctr, 
-#'   family = "binomial", data = mydata_scales)"
+# SAME AS BACK
 
 # manual/literature models
 pitts_model_lit <- glm(pittsburgh.quality.score~time.transplant+BMI+
-                         depression.fctr+gender.fctr+disease.recurrence.fctr+
-                         graft.rejection.dys.fctr+renal.failure.fctr+
-                         fibrosis.fctr+corticoid.fctr, data = mydata_scales, 
-                       family = binomial)
+                         depression.fctr+gender.fctr+liver.diagnosis.fctr,
+                       data = mydata_fct4, family = binomial)
 
 summary(pitts_model_lit)
 
-#' the stepAIC methods have lower AIC compared to the literature
+# ADDING A VARIABLE BECAUSE WE CAN (FOR RULE OF THUMB) 
+# including significant variables from stepwise approach, doing so because we have available degrees of freedom 
+pitts_model_hybrid <- glm(pittsburgh.quality.score~time.transplant+BMI+
+                         depression.fctr+gender.fctr+liver.diagnosis.fctr+disease.recurrence.fctr,
+                       data = mydata_fct4, family = binomial)
+
+summary(pitts_model_hybrid)
 
 # --------------------------------------------------------------------------------
 
@@ -322,35 +334,37 @@ epworth_model_null <- glm(epworth.sleep.scale~1,
 epworth_model_full.step.back <- stepAIC(epworth_model_full, direction = "backward", trace = F)
 
 summary(epworth_model_full.step.back)
-#' glm(formula = epworth.sleep.scale ~ liver.diagnosis.fctr + renal.failure.fctr + 
-#' corticoid.fctr, family = "binomial", data = mydata_scales)
-
-# Conducting stepwise both
-epworth_model_full.step.both <- stepAIC(epworth_model_full, direction = "both", trace = F)
-
-summary(epworth_model_full.step.both)
-#' glm(formula = epworth.sleep.scale ~ liver.diagnosis.fctr + renal.failure.fctr + 
-#' corticoid.fctr, family = "binomial", data = mydata_scales)
+#' glm(formula = epworth.sleep.scale ~ gender.fctr + disease.recurrence.fctr + 
+#' renal.failure.fctr + depression.fctr + corticoid.fctr, family = "binomial", 
+#' data = mydata_scales)
+#' # AIC: 301.06
 
 
 # Conducting stepwise forward 
 epworth_model_full.step.for <- stepAIC(epworth_model_null, direction = "forward", trace = F, scope = list(upper=epworth_model_full, lower=epworth_model_null))
 
 summary(epworth_model_full.step.for)
-#'  glm(formula = epworth.sleep.scale ~ corticoid.fctr + liver.diagnosis.fctr + 
-#'  renal.failure.fctr, family = "binomial", data = mydata_scales)
+#' AIC of FORWARD IS 301.6, HIGHER, USING BAKCWARDS
 
+epworth_pred <- 69/15
+epworth_pred 
 
 # manual/literature models
 epworth_model_lit <- glm(epworth.sleep.scale~time.transplant+BMI+
-                         depression.fctr+gender.fctr+disease.recurrence.fctr+
-                         graft.rejection.dys.fctr+renal.failure.fctr+
-                         fibrosis.fctr+corticoid.fctr, data = mydata_scales, 
-                       family = binomial)
+                           depression.fctr+gender.fctr+liver.diagnosis.fctr,
+                         data = mydata_fct4, family = binomial)
 
 summary(epworth_model_lit)
 
-#' the stepAIC methods have lower AIC compared to the literature
+# Changing high p-value variable 
+epworth_model_hybrid <- glm(epworth.sleep.scale~disease.recurrence.fctr+BMI+
+                           depression.fctr+gender.fctr+liver.diagnosis.fctr,
+                         data = mydata_fct4, family = binomial)
+
+summary(epworth_model_hybrid)
+# AIC: 304.03
+# Swapped disease recurrence for time.transplant as stepwise had has predictor
+# also 
 
 # --------------------------------------------------------------------------------
 
@@ -375,33 +389,30 @@ athens_model_null <- glm(athens.insomnia.scale~1,
 athens_model_full.step.back <- stepAIC(athens_model_full, direction = "backward", trace = F)
 
 summary(athens_model_full.step.back)
-#' glm(formula = athens.insomnia.scale ~ age + gender.fctr + liver.diagnosis.fctr + 
-#' depression.fctr + corticoid.fctr, family = "binomial", data = mydata_scales)
-
-# Conducting stepwise both
-athens_model_full.step.both <- stepAIC(athens_model_full, direction = "both", trace = F)
-
-summary(athens_model_full.step.both)
-#' glm(formula = athens.insomnia.scale ~ age + gender.fctr + liver.diagnosis.fctr + 
-#' depression.fctr + corticoid.fctr, family = "binomial", data = mydata_scales)
-
+# glm(formula = athens.insomnia.scale ~ disease.recurrence.fctr + 
+ #     depression.fctr + corticoid.fctr, family = "binomial", data = mydata_scales)\
 
 # Conducting stepwise forward 
 athens_model_full.step.for <- stepAIC(athens_model_null, direction = "forward", trace = F, scope = list(upper=athens_model_full, lower=athens_model_null))
 
 summary(athens_model_full.step.for)
-#'  glm(formula = athens.insomnia.scale ~ liver.diagnosis.fctr + 
-#'  depression.fctr + corticoid.fctr + age + gender.fctr, family = "binomial", 
-#'  data = mydata_scales)
+# SAME AS BACK 
 
 # manual/literature models
 athens_model_lit <- glm(athens.insomnia.scale~time.transplant+BMI+
-                           depression.fctr+gender.fctr+disease.recurrence.fctr+
-                           graft.rejection.dys.fctr+renal.failure.fctr+
-                           fibrosis.fctr+corticoid.fctr, data = mydata_scales, 
-                         family = binomial)
+                           depression.fctr+gender.fctr+liver.diagnosis.fctr,
+                         data = mydata_fct4, family = binomial)
 
 summary(athens_model_lit)
+
+athens_model_hybrid <- glm(athens.insomnia.scale~disease.recurrence.fctr+time.transplant+BMI+
+                          depression.fctr+gender.fctr+liver.diagnosis.fctr+corticoid.fctr,
+                        data = mydata_fct4, family = binomial)
+
+summary(athens_model_hybrid)
+
+# Measuring collinearity 
+vif(athens_model_lit)
 
 #' the stepAIC methods have lower AIC compared to the literature
 
@@ -411,7 +422,7 @@ summary(athens_model_lit)
 ### Berlin ###############
 ##########################
 
-# Making full model for stepwise (Epworth)
+# Making full model for stepwise 
 berlin_model_full <- glm(berlin.sleep.scale~age+gender.fctr+BMI+time.transplant
                          +liver.diagnosis.fctr+disease.recurrence.fctr+graft.rejection.dys.fctr
                          +fibrosis.fctr+renal.failure.fctr+depression.fctr+corticoid.fctr, 
@@ -427,34 +438,46 @@ berlin_model_null <- glm(berlin.sleep.scale~1,
 berlin_model_full.step.back <- stepAIC(berlin_model_full, direction = "backward", trace = F)
 
 summary(berlin_model_full.step.back)
-#' glm(formula = berlin.sleep.scale ~ BMI + renal.failure.fctr, 
+#' glm(formula = berlin.sleep.scale ~ age + BMI + time.transplant + 
+#' disease.recurrence.fctr + fibrosis.fctr + renal.failure.fctr, 
 #' family = "binomial", data = mydata_scales)
-
-# Conducting stepwise both
-berlin_model_full.step.both <- stepAIC(berlin_model_full, direction = "both", trace = F)
-
-summary(berlin_model_full.step.both)
-#' glm(formula = berlin.sleep.scale ~ BMI + renal.failure.fctr, 
-#' family = "binomial", data = mydata_scales)
-
+#' AIC: 322.43
 
 # Conducting stepwise forward 
 berlin_model_full.step.for <- stepAIC(berlin_model_null, direction = "forward", trace = F, scope = list(upper=berlin_model_full, lower=berlin_model_null))
 
 summary(berlin_model_full.step.for)
-#'  glm(formula = berlin.sleep.scale ~ BMI + renal.failure.fctr, 
-#'  family = "binomial", data = mydata_scales)
+#'  glm(formula = berlin.sleep.scale ~ BMI + time.transplant + renal.failure.fctr + 
+#'  age, family = "binomial", data = mydata_scales)
+#'  AIC: 321.41
+#'  FORWARD HAS LOWER AIC 
 
 # manual/literature models
 berlin_model_lit <- glm(berlin.sleep.scale~time.transplant+BMI+
-                           depression.fctr+gender.fctr+disease.recurrence.fctr+
-                           graft.rejection.dys.fctr+renal.failure.fctr+
-                           fibrosis.fctr+corticoid.fctr, data = mydata_scales, 
-                         family = binomial)
+                             depression.fctr+gender.fctr+liver.diagnosis.fctr,
+                           data = mydata_fct4, family = binomial)
 
 summary(berlin_model_lit)
+# AIC: 330.01
 
-#' the stepAIC methods have lower AIC compared to the literature
+berlin_pred <- 105/15
+berlin_pred
+
+berlin_model_hybrid <- glm(berlin.sleep.scale~time.transplant+BMI+
+                          depression.fctr+gender.fctr+liver.diagnosis.fctr+age+renal.failure.fctr,
+                        data = mydata_fct4, family = binomial)
+
+summary(berlin_model_hybrid)
+#AIC: 327.28
+
+model_summary <- summary(berlin_model_hybrid)
+
+coefficients_summary <- coef(model_summary)
+
+p_values <- coefficients_summary[, "Pr(>|z|)", drop = FALSE]
+
+bon_p <- p.adjust(p_values, method = "bonferroni")
+summary(berlin_model_lit)
 
 # --------------------------------------------------------------------------------
 
