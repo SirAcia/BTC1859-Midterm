@@ -266,7 +266,7 @@ basic_eda(mydata_fct)
 psqi_poor_sleep <- length(which(mydata_num$pittsburgh.quality.score > 4))
 
 # Calculate the total number of observations
-total_psqi_observations <- length(which(!is.na(mydata_num$pittsburgh.quality.score)))
+total_psqi_observations <- length(mydata_num$pittsburgh.quality.score)
 
 # Calculate the prevalence of sleep disturbance
 psqi_prevalence_poor_sleep <- psqi_poor_sleep / total_psqi_observations
@@ -280,7 +280,7 @@ cat("PSQI Prevalence of Sleep Disturbance:", psqi_prevalence_poor_sleep, "\n")
 ess_poor_sleep <- length(which(mydata_num$epworth.sleep.scale > 10))
 
 # Calculate the total number of observations
-total_ess_observations <- length(which(!is.na(mydata_num$epworth.sleep.scale)))
+total_ess_observations <- length(mydata_num$epworth.sleep.scale)
 
 # Calculate the prevalence of sleep disturbance
 ess_prevalence_poor_sleep <- ess_poor_sleep / total_ess_observations
@@ -294,7 +294,7 @@ cat("ESS Prevalence of Sleep Disturbance:", ess_prevalence_poor_sleep, "\n")
 bss_poor_sleep <- length(which(mydata_num$berlin.sleep.scale == 1))
 
 # Calculate the total number of observations
-total_bss_observations <- length(which(!is.na(mydata_num$berlin.sleep.scale)))
+total_bss_observations <- length(mydata_num$berlin.sleep.scale)
 
 # Calculate the prevalence of sleep disturbance
 bss_prevalence_poor_sleep <- bss_poor_sleep / total_bss_observations
@@ -308,7 +308,7 @@ cat("BSS Prevalence of Sleep Disturbance:", bss_prevalence_poor_sleep, "\n")
 ais_poor_sleep <- length(which(mydata_num$athens.insomnia.scale > 5))
 
 # Calculate the total number of observations
-total_ais_observations <- length(which(!is.na(mydata_num$athens.insomnia.scale)))
+total_ais_observations <- length(mydata_num$athens.insomnia.scale)
 
 # Calculate the prevalence of sleep disturbance
 ais_prevalence_poor_sleep <- ais_poor_sleep / total_ais_observations
