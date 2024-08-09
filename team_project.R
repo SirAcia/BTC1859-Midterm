@@ -638,8 +638,6 @@ vif(berlin_model_hybrid)
 ### Correlation ##########
 ##########################
 
-library(corrplot)
-
 # Creating data frame to calculate corr
 corr_data <- mydata_num %>%
   dplyr::select(SF36.PCS, SF36.MCS, berlin.sleep.scale, epworth.sleep.scale, pittsburgh.quality.score, 
@@ -786,7 +784,5 @@ boxplot(SF36_Avg ~ berlin.sleep.scale, data = mydata_num,
         xlab = "BSS (0 = No Sleep Disturbance, 1 = Sleep Disturbance)",
         ylab = "SF36 Average",
         col = c("lightblue", "lightgreen"))
-
-lm(SF36_Avg ~ berlin.sleep.scale+epworth.sleep.scale+pittsburgh.quality.score+athens.insomnia.scale, data = mydata_num)
 
 
