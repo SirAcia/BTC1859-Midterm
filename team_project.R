@@ -66,6 +66,10 @@ mydata_raw <- subset(mydata, , c("Gender", "Age", "BMI", "Time.from.transplant",
 
 # --------------------------------------------------------------------------------
 
+###################################################
+### Descriptive & Exploratory Analysis ############
+###################################################
+
 # Examining structure of raw data 
 str(mydata_raw)
 
@@ -82,7 +86,7 @@ empty_string(mydata_raw)
 # NAs in BMI (2), Age (2), BMI(23), Epworth (17), Pitt(85), Athens (6), Berlin (6)
 # SF36(21), SF36(21) 
 
-# no extreme outliers in age or BMI (only at 70, lowest is at 18 --> GOOD ONLY ADULTS)
+# No extreme outliers in age or BMI (only at 70, lowest is at 18 --> GOOD ONLY ADULTS)
 
 # LEGEND FOR CATEGORICAL (FROM DATA DICTIONARY)
 #' - Gender: 1 = M, 2 = F 
@@ -104,7 +108,13 @@ empty_string(mydata_raw)
 # Setting gender as 1 = F, 0 = M, to match the rest of the data 
 mydata_raw$Gender <- ifelse(mydata_raw$Gender == "2", 1, 0)
 
-# Define the imputation methods for each column
+# --------------------------------------------------------------------------------
+
+##########################
+### Imputation ###########
+##########################
+
+# Defining the imputation methods for each column
 imp_methods <- c(Gender = "",
                  Age = "norm.nob",
                  BMI = "norm.nob",
@@ -123,10 +133,10 @@ imp_methods <- c(Gender = "",
                  SF36.PCS = "norm.nob",
                  SF36.MCS = "norm.nob")
 
-# Perform imputation
+# Performing imputation, using seed 32 for random generation 
 imputed_data <- mice(mydata_raw, method = imp_methods, seed = 32, m = 1, print = FALSE)
 
-# Extract the complete data set with imputed values
+# Extracting complete data set with imputed values
 mydata_raw<- complete(imputed_data, 1)
 
 # Rounding to whole numbers for clinical scales
@@ -137,20 +147,31 @@ mydata_raw$Athens.Insomnia.Scale <- round(mydata_raw$Athens.Insomnia.Scale)
 # Binary values for Berlin.Sleepiness.Scale
 mydata_raw$Berlin.Sleepiness.Scale <- ifelse(mydata_raw$Berlin.Sleepiness.Scale >= 0.5, 1, 0)
 
+# Exploratory analysis post-imputation
 view(mydata_raw)
 
 basic_eda(mydata_raw)
 
+# --------------------------------------------------------------------------------
+
+#################################
+### Numerical Dataset ###########
+#################################
+
+# Saving dataset with numerical variables for correlation analysis
 mydata_num <- mydata_raw %>%
-    dplyr::select(gender = Gender, age = Age, BMI, time.transplant = Time.from.transplant, 
-           liver.diagnosis = Liver.Diagnosis, disease.recurrence = Recurrence.of.disease, 
-           graft.rejection.dys = Rejection.graft.dysfunction, fibrosis = Any.fibrosis, renal.failure = Renal.Failure, 
-           depression = Depression, corticoid = Corticoid, epworth.sleep.scale = Epworth.Sleepiness.Scale, 
-           pittsburgh.quality.score = Pittsburgh.Sleep.Quality.Index.Score, athens.insomnia.scale = Athens.Insomnia.Scale, 
-           berlin.sleep.scale = Berlin.Sleepiness.Scale, SF36.PCS, SF36.MCS)
+  dplyr::select(gender = Gender, age = Age, BMI, time.transplant = Time.from.transplant, 
+                liver.diagnosis = Liver.Diagnosis, disease.recurrence = Recurrence.of.disease, 
+                graft.rejection.dys = Rejection.graft.dysfunction, fibrosis = Any.fibrosis, renal.failure = Renal.Failure, 
+                depression = Depression, corticoid = Corticoid, epworth.sleep.scale = Epworth.Sleepiness.Scale, 
+                pittsburgh.quality.score = Pittsburgh.Sleep.Quality.Index.Score, athens.insomnia.scale = Athens.Insomnia.Scale, 
+                berlin.sleep.scale = Berlin.Sleepiness.Scale, SF36.PCS, SF36.MCS)
 
 # --------------------------------------------------------------------------------
 
+#################################
+### Categorical Dataset #########
+#################################
 
 mydata_raw$Gender_fctr <- ifelse(mydata_raw$Gender == "1", "F", "M")
 mydata_raw$Gender_fctr <- factor(mydata_raw$Gender_fctr) 
@@ -324,7 +345,6 @@ pitts_model_lit <- glm(pittsburgh.quality.score~time.transplant+BMI+
 
 summary(pitts_model_lit)
 
-<<<<<<< HEAD
 # ADDING A VARIABLE BECAUSE WE CAN (FOR RULE OF THUMB) 
 # including significant variables from stepwise approach, doing so because we have available degrees of freedom 
 pitts_model_hybrid <- glm(pittsburgh.quality.score~time.transplant+BMI+
@@ -332,9 +352,6 @@ pitts_model_hybrid <- glm(pittsburgh.quality.score~time.transplant+BMI+
                        data = mydata_fct4, family = binomial)
 
 summary(pitts_model_hybrid)
-=======
-#' the stepAIC models have lower AIC compared to the literature model
->>>>>>> 3f01d61c1f887cc9550f7e4cc7fa79baf2964541
 
 # --------------------------------------------------------------------------------
 
@@ -380,7 +397,6 @@ epworth_model_lit <- glm(epworth.sleep.scale~time.transplant+BMI+
 
 summary(epworth_model_lit)
 
-<<<<<<< HEAD
 # Changing high p-value variable 
 epworth_model_hybrid <- glm(epworth.sleep.scale~disease.recurrence.fctr+BMI+
                            depression.fctr+gender.fctr+liver.diagnosis.fctr,
@@ -389,10 +405,6 @@ epworth_model_hybrid <- glm(epworth.sleep.scale~disease.recurrence.fctr+BMI+
 summary(epworth_model_hybrid)
 # AIC: 304.03
 # Swapped disease recurrence for time.transplant as stepwise had has predictor
-# also 
-=======
-#' the stepAIC models have lower AIC compared to the literature model
->>>>>>> 3f01d61c1f887cc9550f7e4cc7fa79baf2964541
 
 # --------------------------------------------------------------------------------
 
@@ -433,7 +445,6 @@ athens_model_lit <- glm(athens.insomnia.scale~time.transplant+BMI+
 
 summary(athens_model_lit)
 
-<<<<<<< HEAD
 athens_model_hybrid <- glm(athens.insomnia.scale~disease.recurrence.fctr+time.transplant+BMI+
                           depression.fctr+gender.fctr+liver.diagnosis.fctr+corticoid.fctr,
                         data = mydata_fct4, family = binomial)
@@ -444,9 +455,6 @@ summary(athens_model_hybrid)
 vif(athens_model_lit)
 
 #' the stepAIC methods have lower AIC compared to the literature
-=======
-#' the stepAIC models have lower AIC compared to the literature model
->>>>>>> 3f01d61c1f887cc9550f7e4cc7fa79baf2964541
 
 # --------------------------------------------------------------------------------
 
