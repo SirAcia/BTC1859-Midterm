@@ -660,7 +660,7 @@ mydata_num$SF36_Avg <- rowMeans(mydata_num[ ,c("SF36.PCS", "SF36.MCS")])
 cor_psqi <- cor.test(mydata_num$pittsburgh.quality.score, mydata_num$SF36_Avg, method = "pearson")
 cor_ess <- cor.test(mydata_num$epworth.sleep.scale, mydata_num$SF36_Avg, method = "pearson")
 cor_ais <- cor.test(mydata_num$athens.insomnia.scale, mydata_num$SF36_Avg, method = "pearson")
-cor_bss <- cor.test(mydata_num$berlin.sleep.scale, mydata_num$SF36_Avg, method = "pearson")
+cor_bss <- cor.test(mydata_num$berlin.sleep.scale, mydata_num$SF36_Avg, method = "spearman")
 
 cor_psqi
 
