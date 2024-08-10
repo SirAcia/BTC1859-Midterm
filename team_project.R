@@ -789,6 +789,21 @@ boxplot(SF36_Avg ~ berlin.sleep.scale, data = mydata_num,
         ylab = "SF36 Average",
         col = c("lightblue", "lightgreen"))
 
+# Box plot for BSS vs SF36 PCS
+boxplot(SF36.PCS ~ berlin.sleep.scale, data = mydata_num,
+        main = "BSS vs SF36.PCS",
+        xlab = "BSS (0 = No Sleep Disturbance, 1 = Sleep Disturbance)",
+        ylab = "SF36 PCS",
+        col = c("lightblue", "lightgreen"))
+
+# Box plot for BSS vs SF36 MCS
+boxplot(SF36.MCS ~ berlin.sleep.scale, data = mydata_num,
+        main = "BSS vs SF36.MCS",
+        xlab = "BSS (0 = No Sleep Disturbance, 1 = Sleep Disturbance)",
+        ylab = "SF36 MCS",
+        col = c("lightblue", "lightgreen"))
+
+
 # Measuring differences in mean for PSQI 
 # Storing observations which are clinically defined as sleep disturbed by PSQI 
 PSQI_yes <- mydata_num %>%
