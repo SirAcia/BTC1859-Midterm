@@ -785,4 +785,135 @@ boxplot(SF36_Avg ~ berlin.sleep.scale, data = mydata_num,
         ylab = "SF36 Average",
         col = c("lightblue", "lightgreen"))
 
+# Measuring differences in mean for PSQI 
+# Storing observations which are clinically defined as sleep disturbed by PSQI 
+PSQI_yes <- mydata_num %>%
+  dplyr::filter(mydata_num$pittsburgh.quality.score > 4) 
+
+# Number of sleep disturbed according to PSQI
+PSQI_yes_count <- length(PSQI_yes$SF36_Avg)
+
+# Storing observations which are NOT clinically defined as sleep disturbed by PSQI 
+PSQI_no <- mydata_num %>%
+  dplyr::filter(mydata_num$pittsburgh.quality.score <= 4)
+
+# Number of NOT sleep disturbed according to PSQI
+PSQI_no_count <- length(PSQI_no$SF36_Avg)
+
+# Calculating means for each scale (SF36.PCS, SF36.MCS, SF36.AVG) for sub-group (PSQI-yes / PSQI-no)
+PSQI_yes_avg_PCS <- mean(PSQI_yes$SF36.PCS)
+PSQI_no_avg_PCS <- mean(PSQI_no$SF36.PCS)
+
+PSQI_yes_avg_MCS <- mean(PSQI_yes$SF36.MCS)
+PSQI_no_avg_MCS <- mean(PSQI_no$SF36.MCS)
+
+PSQI_avg_avg_yes <- mean(PSQI_yes$SF36_Avg)
+PSQI_avg_avg_no <- mean(PSQI_no$SF36_Avg)
+
+# Conducting t-tests to determine if there is a statistically significant 
+# difference in the mean quality of life for each sub-group
+t.test(PSQI_yes$SF36.PCS, PSQI_no$SF36.PCS)
+
+t.test(PSQI_yes$SF36.MCS, PSQI_no$SF36.MCS)
+
+t.test(PSQI_yes$SF36_Avg, PSQI_no$SF36_Avg)
+
+# Measuring differences in mean for ESS 
+# Storing observations which are clinically defined as sleep disturbed by ESS
+ESS_yes <- mydata_num %>%
+  dplyr::filter(mydata_num$epworth.sleep.scale > 10)
+
+# Number of sleep disturbed according to ESS
+ESS_yes_count <- length(ESS_yes$SF36_Avg)
+
+# Storing observations which are NOT clinically defined as sleep disturbed by ESS
+ESS_no <- mydata_num %>%
+  dplyr::filter(mydata_num$epworth.sleep.scale <= 10)
+
+# Number of NOT sleep disturbed according to ESS
+ESS_no_count <- length(ESS_no$SF36_Avg)
+
+# Calculating means for each scale (SF36.PCS, SF36.MCS, SF36.AVG) for sub-group (ESS-yes / ESS-no)
+ESS_yes_avg_PCS <- mean(ESS_yes$SF36.PCS)
+ESS_no_avg_PCS <- mean(ESS_no$SF36.PCS)
+
+ESS_yes_avg_MCS <- mean(ESS_yes$SF36.MCS)
+ESS_no_avg_MCS <- mean(ESS_no$SF36.MCS)
+
+ESS_avg_avg_yes <- mean(ESS_yes$SF36_Avg)
+ESS_avg_avg_no <- mean(ESS_no$SF36_Avg)
+
+# Conducting t-tests to determine if there is a statistically significant 
+# difference in the mean quality of life for each sub-group
+t.test(ESS_yes$SF36.PCS, ESS_no$SF36.PCS)
+
+t.test(ESS_yes$SF36.MCS, ESS_no$SF36.MCS)
+
+t.test(ESS_yes$SF36_Avg, ESS_no$SF36_Avg)
+
+# Measuring differences in mean for AIS
+# Storing observations which are clinically defined as sleep disturbed by AIS
+AIS_yes <- mydata_num %>%
+  dplyr::filter(mydata_num$athens.insomnia.scale > 5)
+
+# Number of sleep disturbed according to AIS
+AIS_yes_count <- length(AIS_yes$SF36_Avg)
+
+# Storing observations which are NOT clinically defined as sleep disturbed by AIS
+AIS_no <- mydata_num %>%
+  dplyr::filter(mydata_num$athens.insomnia.scale <= 5)
+
+# Number of NOT sleep disturbed according to AIS
+AIS_no_count <- length(AIS_no$SF36_Avg)
+
+# Calculating means for each scale (SF36.PCS, SF36.MCS, SF36.AVG) for sub-group (AIS-yes / AIS-no)
+AIS_yes_avg_PCS <- mean(AIS_yes$SF36.PCS)
+AIS_no_avg_PCS <- mean(AIS_no$SF36.PCS)
+
+AIS_yes_avg_MCS <- mean(AIS_yes$SF36.MCS)
+AIS_no_avg_MCS <- mean(AIS_no$SF36.MCS)
+
+AIS_avg_avg_yes <- mean(AIS_yes$SF36_Avg)
+AIS_avg_avg_no <- mean(AIS_no$SF36_Avg)
+
+# Conducting t-tests to determine if there is a statistically significant 
+# difference in the mean quality of life for each sub-group
+t.test(AIS_yes$SF36.PCS, AIS_no$SF36.PCS)
+
+t.test(AIS_yes$SF36.MCS, AIS_no$SF36.MCS)
+
+t.test(AIS_yes$SF36_Avg, AIS_no$SF36_Avg)
+
+# Measuring differences in mean for BSS
+# Storing observations which are clinically defined as sleep disturbed by BSS
+BSS_yes <- mydata_num %>%
+  dplyr::filter(mydata_num$berlin.sleep.scale == 1)
+
+# Number of sleep disturbed according to BSS
+BSS_yes_count <- length(BSS_yes$SF36_Avg)
+
+# Storing observations which are NOT clinically defined as sleep disturbed by BSS
+BSS_no <- mydata_num %>%
+  dplyr::filter(mydata_num$berlin.sleep.scale == 0)
+
+# Number of NOT sleep disturbed according to AIS
+BSS_no_count <- length(BSS_no$SF36_Avg)
+
+# Calculating means for each scale (SF36.PCS, SF36.MCS, SF36.AVG) for sub-group (BSS-yes / BSS-no)
+BSS_yes_avg_PCS <- mean(BSS_yes$SF36.PCS)
+AIS_no_avg_PCS <- mean(BSS_no$SF36.PCS)
+
+BSS_yes_avg_MCS <- mean(BSS_yes$SF36.MCS)
+BSS_no_avg_MCS <- mean(BSS_no$SF36.MCS)
+
+BSS_avg_avg_yes <- mean(BSS_yes$SF36_Avg)
+BSS_avg_avg_no <- mean(BSS_no$SF36_Avg)
+
+# Conducting t-tests to determine if there is a statistically significant 
+# difference in the mean quality of life for each sub-group
+t.test(BSS_yes$SF36.PCS, BSS_no$SF36.PCS)
+
+t.test(BSS_yes$SF36.MCS, BSS_no$SF36.MCS)
+
+t.test(BSS_yes$SF36_Avg, BSS_no$SF36_Avg)
 
