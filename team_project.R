@@ -106,10 +106,10 @@ empty_string(mydata_raw)
 # 268 obs TOTAL 
 
 # Only age, BMI, and time from transplant is considered continous, rest is categorical 
-# NAs in BMI (2), Age (2), BMI(23), Epworth (17), Pitt(85), Athens (6), Berlin (6)
+# NAs in Age (2), BMI(23), Epworth (17), Pitt(85), Athens (6), Berlin (6)
 # SF36(21), SF36(21) 
 
-# No extreme outliers in age or BMI (only at 70, lowest is at 18 --> GOOD ONLY ADULTS)
+# No extreme outliers in age or BMI (only at 70, lowest is at 18 --> ONLY ADULTS)
 
 # LEGEND FOR CATEGORICAL (FROM DATA DICTIONARY)
 #' - Gender: 1 = M, 2 = F 
