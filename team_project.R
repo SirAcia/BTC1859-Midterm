@@ -778,6 +778,10 @@ plot(mydata_num$berlin.sleep.scale, mydata_num$SF36_Avg,
 abline(lm(SF36_Avg ~ berlin.sleep.scale, data = mydata_num), col = "purple")
 summary(lm(SF36_Avg ~ berlin.sleep.scale, data = mydata_num))
 
+# Get the linear regression summary for the PCS and MCS quality of life
+summary(lm(SF36.PCS ~ berlin.sleep.scale, data = mydata_num))
+summary(lm(SF36.MCS ~ berlin.sleep.scale, data = mydata_num))
+
 # Box plot for BSS vs SF36 Average
 boxplot(SF36_Avg ~ berlin.sleep.scale, data = mydata_num,
         main = "BSS vs SF36_Average",
