@@ -111,6 +111,17 @@ empty_string(mydata_raw)
 
 # No extreme outliers in age or BMI (only at 70, lowest is at 18 --> ONLY ADULTS)
 
+# Largest concern is NAs in Pittsburgh scale data
+Pitts_NA <- mydata_raw %>%
+  dplyr::filter(is.na(mydata_raw$Pittsburgh.Sleep.Quality.Index.Score))
+
+#Using summary to compare overall statistics between NAs in Pittsburgh and overall data 
+summary(Pitts_NA)
+
+summary(mydata_raw)
+
+# No extreme outliers in age or BMI (only at 70, lowest is at 18 --> ONLY ADULTS)
+
 # LEGEND FOR CATEGORICAL (FROM DATA DICTIONARY)
 #' - Gender: 1 = M, 2 = F 
 #' - Liver Diagnosis:  1 = Hep C, 
@@ -831,11 +842,11 @@ PSQI_avg_avg_no <- mean(PSQI_no$SF36_Avg)
 
 # Conducting t-tests to determine if there is a statistically significant 
 # difference in the mean quality of life for each sub-group
-t.test(PSQI_yes$SF36.PCS, PSQI_no$SF36.PCS)
+t.test(PSQI_yes$SF36.PCS, PSQI_no$SF36.PCS, alternative = "two.sided")
 
-t.test(PSQI_yes$SF36.MCS, PSQI_no$SF36.MCS)
+t.test(PSQI_yes$SF36.MCS, PSQI_no$SF36.MCS, alternative = "two.sided")
 
-t.test(PSQI_yes$SF36_Avg, PSQI_no$SF36_Avg)
+t.test(PSQI_yes$SF36_Avg, PSQI_no$SF36_Avg, alternative = "two.sided")
 
 # Measuring differences in mean for ESS 
 # Storing observations which are clinically defined as sleep disturbed by ESS
@@ -864,11 +875,11 @@ ESS_avg_avg_no <- mean(ESS_no$SF36_Avg)
 
 # Conducting t-tests to determine if there is a statistically significant 
 # difference in the mean quality of life for each sub-group
-t.test(ESS_yes$SF36.PCS, ESS_no$SF36.PCS)
+t.test(ESS_yes$SF36.PCS, ESS_no$SF36.PCS, alternative = "two.sided")
 
-t.test(ESS_yes$SF36.MCS, ESS_no$SF36.MCS)
+t.test(ESS_yes$SF36.MCS, ESS_no$SF36.MCS, alternative = "two.sided")
 
-t.test(ESS_yes$SF36_Avg, ESS_no$SF36_Avg)
+t.test(ESS_yes$SF36_Avg, ESS_no$SF36_Avg, alternative = "two.sided")
 
 # Measuring differences in mean for AIS
 # Storing observations which are clinically defined as sleep disturbed by AIS
@@ -897,11 +908,11 @@ AIS_avg_avg_no <- mean(AIS_no$SF36_Avg)
 
 # Conducting t-tests to determine if there is a statistically significant 
 # difference in the mean quality of life for each sub-group
-t.test(AIS_yes$SF36.PCS, AIS_no$SF36.PCS)
+t.test(AIS_yes$SF36.PCS, AIS_no$SF36.PCS, alternative = "two.sided")
 
-t.test(AIS_yes$SF36.MCS, AIS_no$SF36.MCS)
+t.test(AIS_yes$SF36.MCS, AIS_no$SF36.MCS, alternative = "two.sided")
 
-t.test(AIS_yes$SF36_Avg, AIS_no$SF36_Avg)
+t.test(AIS_yes$SF36_Avg, AIS_no$SF36_Avg, alternative = "two.sided")
 
 # Measuring differences in mean for BSS
 # Storing observations which are clinically defined as sleep disturbed by BSS
@@ -930,9 +941,9 @@ BSS_avg_avg_no <- mean(BSS_no$SF36_Avg)
 
 # Conducting t-tests to determine if there is a statistically significant 
 # difference in the mean quality of life for each sub-group
-t.test(BSS_yes$SF36.PCS, BSS_no$SF36.PCS)
+t.test(BSS_yes$SF36.PCS, BSS_no$SF36.PCS, alternative = "two.sided")
 
-t.test(BSS_yes$SF36.MCS, BSS_no$SF36.MCS)
+t.test(BSS_yes$SF36.MCS, BSS_no$SF36.MCS, alternative = "two.sided")
 
-t.test(BSS_yes$SF36_Avg, BSS_no$SF36_Avg)
+t.test(BSS_yes$SF36_Avg, BSS_no$SF36_Avg, alternative = "two.sided")
 
