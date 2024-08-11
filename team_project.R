@@ -120,7 +120,10 @@ summary(Pitts_NA)
 
 summary(mydata_raw)
 # Overall no obvious concerns with NAs, seem to match overall trends and similar IQRs & mean 
-# BUT NO renal failure seen in Pittsburgh NAs
+# BUT NO renal failure seen in Pittsburgh NAs, this may indicate missing at random (MAR) data
+# without further information on the cintext behin data collection, hard to determine type of
+# missingness but the lack of renal failure may suggest missingness due to unseen, observable 
+# variables. 
 
 # No extreme outliers in age or BMI (only at 70, lowest is at 18 --> ONLY ADULTS)
 
@@ -150,6 +153,8 @@ mydata_raw$Gender <- ifelse(mydata_raw$Gender == "2", 1, 0)
 ##########################
 ### Imputation ###########
 ##########################
+
+#Using stochastic imputation as presumed MAR 
 
 # Defining the imputation methods for each column
 imp_methods <- c(Gender = "",
