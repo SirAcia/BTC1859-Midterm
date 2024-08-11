@@ -115,10 +115,12 @@ empty_string(mydata_raw)
 Pitts_NA <- mydata_raw %>%
   dplyr::filter(is.na(mydata_raw$Pittsburgh.Sleep.Quality.Index.Score))
 
-#Using summary to compare overall statistics between NAs in Pittsburgh and overall data 
+# Using summary to compare overall statistics between NAs in Pittsburgh and overall data 
 summary(Pitts_NA)
 
 summary(mydata_raw)
+# Overall no obvious concerns with NAs, seem to match overall trends and similar IQRs & mean 
+# BUT NO renal failure seen in Pittsburgh NAs
 
 # No extreme outliers in age or BMI (only at 70, lowest is at 18 --> ONLY ADULTS)
 
