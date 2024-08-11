@@ -864,15 +864,25 @@ PSQI_no <- mydata_num %>%
 # Number of NOT sleep disturbed according to PSQI
 PSQI_no_count <- length(PSQI_no$SF36_Avg)
 
-# Calculating means for each scale (SF36.PCS, SF36.MCS, SF36.AVG) for sub-group (PSQI-yes / PSQI-no)
+# Calculating means and st devs for each scale (SF36.PCS, SF36.MCS, SF36.AVG) for sub-group (PSQI-yes / PSQI-no)
 PSQI_yes_avg_PCS <- mean(PSQI_yes$SF36.PCS)
+PSQI_yes_stdev_PCS <- sd(PSQI_yes$SF36.PCS)
+
 PSQI_no_avg_PCS <- mean(PSQI_no$SF36.PCS)
+PSQI_no_stdev_PCS <- sd(PSQI_no$SF36.PCS)
+
 
 PSQI_yes_avg_MCS <- mean(PSQI_yes$SF36.MCS)
+PSQI_yes_stdev_MCS <- sd(PSQI_yes$SF36.MCS)
+
 PSQI_no_avg_MCS <- mean(PSQI_no$SF36.MCS)
+PSQI_no_stdev_MCS <- sd(PSQI_no$SF36.MCS)
 
 PSQI_avg_avg_yes <- mean(PSQI_yes$SF36_Avg)
+PSQI_avg_yes_stdev <- sd(PSQI_yes$SF36_Avg)
+
 PSQI_avg_avg_no <- mean(PSQI_no$SF36_Avg)
+PSQI_avg_no_stdev  <- sd(PSQI_no$SF36_Avg)
 
 # Conducting t-tests to determine if there is a statistically significant 
 # difference in the mean quality of life for each sub-group
@@ -899,13 +909,22 @@ ESS_no_count <- length(ESS_no$SF36_Avg)
 
 # Calculating means for each scale (SF36.PCS, SF36.MCS, SF36.AVG) for sub-group (ESS-yes / ESS-no)
 ESS_yes_avg_PCS <- mean(ESS_yes$SF36.PCS)
+ESS_yes_stdev_PCS <- sd(ESS_yes$SF36.PCS)
+
 ESS_no_avg_PCS <- mean(ESS_no$SF36.PCS)
+ESS_no_stdev_PCS <- sd(ESS_no$SF36.PCS)
 
 ESS_yes_avg_MCS <- mean(ESS_yes$SF36.MCS)
+ESS_yes_stdev_MCS <- sd(ESS_yes$SF36.MCS)
+
 ESS_no_avg_MCS <- mean(ESS_no$SF36.MCS)
+ESS_no_stdev_MCS <- sd(ESS_no$SF36.MCS)
 
 ESS_avg_avg_yes <- mean(ESS_yes$SF36_Avg)
+ESS_avg_stdev_yes <- sd(ESS_yes$SF36_Avg)
+
 ESS_avg_avg_no <- mean(ESS_no$SF36_Avg)
+ESS_avg_stdev_no <- sd(ESS_no$SF36_Avg)
 
 # Conducting t-tests to determine if there is a statistically significant 
 # difference in the mean quality of life for each sub-group
@@ -932,13 +951,22 @@ AIS_no_count <- length(AIS_no$SF36_Avg)
 
 # Calculating means for each scale (SF36.PCS, SF36.MCS, SF36.AVG) for sub-group (AIS-yes / AIS-no)
 AIS_yes_avg_PCS <- mean(AIS_yes$SF36.PCS)
+AIS_yes_stdev_PCS <- sd(AIS_yes$SF36.PCS)
+
 AIS_no_avg_PCS <- mean(AIS_no$SF36.PCS)
+AIS_no_stdev_PCS <- sd(AIS_no$SF36.PCS)
 
 AIS_yes_avg_MCS <- mean(AIS_yes$SF36.MCS)
+AIS_yes_stdev_MCS <- sd(AIS_yes$SF36.MCS)
+
 AIS_no_avg_MCS <- mean(AIS_no$SF36.MCS)
+AIS_no_stdev_MCS <- sd(AIS_no$SF36.MCS)
 
 AIS_avg_avg_yes <- mean(AIS_yes$SF36_Avg)
+AIS_avg_stdev_yes <- sd(AIS_yes$SF36_Avg)
+
 AIS_avg_avg_no <- mean(AIS_no$SF36_Avg)
+AIS_avg_stdev_no <- sd(AIS_no$SF36_Avg)
 
 # Conducting t-tests to determine if there is a statistically significant 
 # difference in the mean quality of life for each sub-group
@@ -965,13 +993,22 @@ BSS_no_count <- length(BSS_no$SF36_Avg)
 
 # Calculating means for each scale (SF36.PCS, SF36.MCS, SF36.AVG) for sub-group (BSS-yes / BSS-no)
 BSS_yes_avg_PCS <- mean(BSS_yes$SF36.PCS)
+BSS_yes_stdev_PCS <- sd(BSS_yes$SF36.PCS)
+
 AIS_no_avg_PCS <- mean(BSS_no$SF36.PCS)
+AIS_no_stdev_PCS <- sd(BSS_no$SF36.PCS)
 
 BSS_yes_avg_MCS <- mean(BSS_yes$SF36.MCS)
+BSS_yes_stdev_MCS <- sd(BSS_yes$SF36.MCS)
+
 BSS_no_avg_MCS <- mean(BSS_no$SF36.MCS)
+BSS_no_stdev_MCS <- sd(BSS_no$SF36.MCS)
 
 BSS_avg_avg_yes <- mean(BSS_yes$SF36_Avg)
+BSS_avg_stdev_yes <- sd(BSS_yes$SF36_Avg)
+
 BSS_avg_avg_no <- mean(BSS_no$SF36_Avg)
+BSS_avg_stdev_no <- sd(BSS_no$SF36_Avg)
 
 # Conducting t-tests to determine if there is a statistically significant 
 # difference in the mean quality of life for each sub-group
