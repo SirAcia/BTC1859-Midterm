@@ -105,6 +105,8 @@ empty_string(mydata_raw)
 # No blank strings (makes sense as all data is in numeric form), 
 # 268 obs TOTAL 
 
+# No extreme outliers in age or BMI (only at 70, lowest is at 18 --> ONLY ADULTS)
+
 # Only age, BMI, and time from transplant is considered continous, rest is categorical 
 # NAs in Age (2), BMI(23), Epworth (17), Pitt(85), Athens (6), Berlin (6)
 # SF36(21), SF36(21) 
@@ -121,11 +123,36 @@ summary(Pitts_NA)
 summary(mydata_raw)
 # Overall no obvious concerns with NAs, seem to match overall trends and similar IQRs & mean 
 # BUT NO renal failure seen in Pittsburgh NAs, this may indicate missing at random (MAR) data
-# without further information on the cintext behin data collection, hard to determine type of
+# without further information on the context behind data collection, hard to determine type of
 # missingness but the lack of renal failure may suggest missingness due to unseen, observable 
 # variables. 
 
-# No extreme outliers in age or BMI (only at 70, lowest is at 18 --> ONLY ADULTS)
+PSQI_NA_renal <- mydata_raw %>%
+  filter(is.na(Pittsburgh.Sleep.Quality.Index.Score)) %>%
+  count(Renal.Failure)
+
+PSQI_NA_renal
+
+# Seeing if this is the case for other scales as well 
+ESS_NA_renal <- mydata_raw %>%
+  filter(is.na(Epworth.Sleepiness.Scale)) %>%
+  count(Renal.Failure)
+
+ESS_NA_renal
+
+AIS_NA_renal <- mydata_raw %>%
+  filter(is.na(Athens.Insomnia.Scale)) %>%
+  count(Renal.Failure)
+
+AIS_NA_renal
+
+BSS_NA_renal <- mydata_raw %>%
+  filter(is.na(Berlin.Sleepiness.Scale)) %>%
+  count(Renal.Failure)
+
+BSS_NA_renal 
+# No renal failure for any of the missing values for any of the clinical scales 
+# This systematic missingness may be due to unseen variables, unlikely MNAR as values are 0 or 1
 
 # LEGEND FOR CATEGORICAL (FROM DATA DICTIONARY)
 #' - Gender: 1 = M, 2 = F 
@@ -953,4 +980,7 @@ t.test(BSS_yes$SF36.PCS, BSS_no$SF36.PCS, alternative = "two.sided")
 t.test(BSS_yes$SF36.MCS, BSS_no$SF36.MCS, alternative = "two.sided")
 
 t.test(BSS_yes$SF36_Avg, BSS_no$SF36_Avg, alternative = "two.sided")
+
+
+
 
