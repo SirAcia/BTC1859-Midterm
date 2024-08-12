@@ -1,7 +1,7 @@
 # BTC1859 Team project
 # Mikael Goutama, Zachery Chan, Mausam Vadakkayil
 # Github Repo: https://github.com/SirAcia/BTC1859-Midterm.git
-# Code dated to: Aug 9, 2024 
+# Code dated to: Aug 12, 2024 
 
 # --------------------------------------------------------------------------------
 
@@ -460,7 +460,7 @@ summary(pitts_model_lit)
 # AIC: 315.38
 # Currently at 5 degrees of freedom, m/15 gives limit of 6 degrees
 
-# Measuring collinearityfor literature model
+# Measuring collinearity for literature model
 vif(pitts_model_lit)
 # Nothing above 5, so no strong evidence for collinearity 
 
@@ -477,7 +477,7 @@ summary(pitts_model_hybrid)
 # Using ANOVA to determine if hybrid model is significantly better 
 anova(pitts_model_lit, pitts_model_hybrid, test = "Chisq")
 
-# Measuring collinearityfor hybrid model
+# Measuring collinearity for hybrid model
 vif(pitts_model_hybrid)
 # Nothing above 5, so no strong evidence for collinearity 
 
@@ -513,7 +513,7 @@ summary(epworth_model_full.step.for)
 # Model has same predictors as backwards model
 # AIC: 296.99 <- same AIC as backwards stepwise model 
 
-# Measuring collinearityfor stepwise model
+# Measuring collinearity for stepwise model
 vif(epworth_model_full.step.for)
 # Nothing above 5, so no strong evidence for collinearity 
 
@@ -526,7 +526,7 @@ summary(epworth_model_lit)
 # AIC: 304.28
 # Currently at 5 degrees of freedom, m/15 gives limit of 5 degrees
 
-# Measuring collinearityfor stepwise model
+# Measuring collinearity for stepwise model
 vif(epworth_model_lit)
 # Nothing above 5, so no strong evidence for collinearity 
 
@@ -539,7 +539,7 @@ epworth_model_hybrid <- glm(epworth.sleep.scale~corticoid.fctr+BMI+
 summary(epworth_model_hybrid)
 # AIC: 299.74
 
-# Measuring collinearityfor stepwise model
+# Measuring collinearity for stepwise model
 vif(epworth_model_hybrid)
 # Nothing above 5, so no strong evidence for collinearity 
 
@@ -576,7 +576,7 @@ summary(athens_model_full.step.for)
 # Model has same predictors as backwards model
 # AIC: 358.9 <- same AIC as backwards stepwise model 
 
-# Measuring collinearityfor stepwise model
+# Measuring collinearity for stepwise model
 vif(athens_model_full.step.for)
 # Nothing above 5, so no strong evidence for collinearity 
 
@@ -589,7 +589,7 @@ summary(athens_model_lit)
 # AIC: 366.51
 # Currently at 5 degrees of freedom, m/15 gives limit of 8 degrees
 
-# Measuring collinearityfor literature model
+# Measuring collinearity for literature model
 vif(athens_model_lit)
 # Nothing above 5, so no strong evidence for collinearity 
 
@@ -609,7 +609,7 @@ summary(athens_model_hybrid)
 # Using ANOVA to determine if hybrid model is significantly better 
 anova(athens_model_lit, athens_model_hybrid, test = "Chisq")
 
-# Measuring collinearityfor hybrid model
+# Measuring collinearity for hybrid model
 vif(athens_model_hybrid)
 # Nothing above 5, so no strong evidence for collinearity 
 
@@ -645,7 +645,7 @@ summary(berlin_model_full.step.for)
 #'  AIC: 321.41
 #'  Forward stepwise has lower AIC, will prefer using forward stepwise model as compared to backwards 
 
-# Measuring collinearityfor hybrid model
+# Measuring collinearity for hybrid model
 vif(berlin_model_full.step.for)
 # Nothing above 5, so no strong evidence for collinearity 
 
@@ -658,7 +658,7 @@ summary(berlin_model_lit)
 # AIC: 330.01
 # Currently at 5 degrees of freedom, m/15 gives limit of 7 degrees
 
-# Measuring collinearityfor hybrid model
+# Measuring collinearity for hybrid model
 vif(berlin_model_lit)
 # Nothing above 5, so no strong evidence for collinearity 
 
@@ -676,7 +676,7 @@ summary(berlin_model_hybrid)
 # Using ANOVA to determine if hybrid model is significantly better 
 anova(berlin_model_lit, berlin_model_hybrid, test = "Chisq")
 
-# Measuring collinearityfor hybrid model
+# Measuring collinearity for hybrid model
 vif(berlin_model_hybrid)
 # Nothing above 5, so no strong evidence for collinearity 
 
