@@ -101,6 +101,10 @@ glimpse(mydata_raw)
 basic_eda(mydata_raw)
 # No zeroes in gender, coded as 1s and 2s 
 
+# Checking for any duplicates 
+duplicated(mydata_raw) 
+# No duplicates 
+
 empty_string(mydata_raw)
 # No blank strings (makes sense as all data is in numeric form), 
 # 268 obs TOTAL 
