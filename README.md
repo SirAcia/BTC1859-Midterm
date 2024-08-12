@@ -1,5 +1,4 @@
 # BTC1859-Midterm
 
-***insert dictionary of files***
-
-*insert general plan/steps performed*
+team_project.R - R script for project
+project_data.csv - csv file of raw data
