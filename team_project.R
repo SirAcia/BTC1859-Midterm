@@ -1015,7 +1015,7 @@ BSS_avg_avg_no <- mean(BSS_no$SF36_Avg)
 BSS_avg_stdev_no <- sd(BSS_no$SF36_Avg)
 
 # Conducting t-tests to determine if there is a statistically significant 
-# difference in the mean quality of life for each sub-group
+# Difference in the mean quality of life for each sub-group
 t.test(BSS_yes$SF36.PCS, BSS_no$SF36.PCS, alternative = "two.sided")
 
 t.test(BSS_yes$SF36.MCS, BSS_no$SF36.MCS, alternative = "two.sided")
