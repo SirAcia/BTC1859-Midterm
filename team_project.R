@@ -447,9 +447,9 @@ summary(pitts_model_full.step.for)
 # Model has same predictors as backwards model
 # AIC: 302.93 <- same AIC as backwards stepwise model 
 
-# Measuring colinearity for stepwise model
+# Measuring collinearity for stepwise model
 vif(pitts_model_full.step.for)
-# Nothing above 5, so no strong evidence for colinearity
+# Nothing above 5, so no strong evidence for collinearity 
 
 # Literature model based on predictors of interest from literature review
 pitts_model_lit <- glm(pittsburgh.quality.score~time.transplant+BMI+
@@ -460,9 +460,9 @@ summary(pitts_model_lit)
 # AIC: 315.38
 # Currently at 5 degrees of freedom, m/15 gives limit of 6 degrees
 
-# Measuring colinearity for literature model
+# Measuring collinearityfor literature model
 vif(pitts_model_lit)
-# Nothing above 5, so no strong evidence for colinearity
+# Nothing above 5, so no strong evidence for collinearity 
 
 # Hybridizing model with sample-specific predictors
 # Including significant variables from stepwise approach, doing so because 
@@ -477,9 +477,9 @@ summary(pitts_model_hybrid)
 # Using ANOVA to determine if hybrid model is significantly better 
 anova(pitts_model_lit, pitts_model_hybrid, test = "Chisq")
 
-# Measuring colinearity for hybrid model
+# Measuring collinearityfor hybrid model
 vif(pitts_model_hybrid)
-# Nothing above 5, so no strong evidence for colinearity
+# Nothing above 5, so no strong evidence for collinearity 
 
 # --------------------------------------------------------------------------------
 
@@ -513,9 +513,9 @@ summary(epworth_model_full.step.for)
 # Model has same predictors as backwards model
 # AIC: 296.99 <- same AIC as backwards stepwise model 
 
-# Measuring colinearity for stepwise model
+# Measuring collinearityfor stepwise model
 vif(epworth_model_full.step.for)
-# Nothing above 5, so no strong evidence for colinearity
+# Nothing above 5, so no strong evidence for collinearity 
 
 # Literature model based on predictors of interest from literature review
 epworth_model_lit <- glm(epworth.sleep.scale~time.transplant+BMI+
@@ -526,9 +526,9 @@ summary(epworth_model_lit)
 # AIC: 304.28
 # Currently at 5 degrees of freedom, m/15 gives limit of 5 degrees
 
-# Measuring colinearity for stepwise model
+# Measuring collinearityfor stepwise model
 vif(epworth_model_lit)
-# Nothing above 5, so no strong evidence for colinearity
+# Nothing above 5, so no strong evidence for collinearity 
 
 # Hybridizing model with sample-specific predictors
 # Switching high p-value predictor, transplant time, with corticoid as we have hit limit
@@ -539,9 +539,9 @@ epworth_model_hybrid <- glm(epworth.sleep.scale~corticoid.fctr+BMI+
 summary(epworth_model_hybrid)
 # AIC: 299.74
 
-# Measuring colinearity for stepwise model
+# Measuring collinearityfor stepwise model
 vif(epworth_model_hybrid)
-# Nothing above 5, so no strong evidence for colinearity
+# Nothing above 5, so no strong evidence for collinearity 
 
 
 # --------------------------------------------------------------------------------
@@ -576,9 +576,9 @@ summary(athens_model_full.step.for)
 # Model has same predictors as backwards model
 # AIC: 358.9 <- same AIC as backwards stepwise model 
 
-# Measuring colinearity for stepwise model
+# Measuring collinearityfor stepwise model
 vif(athens_model_full.step.for)
-# Nothing above 5, so no strong evidence for colinearity
+# Nothing above 5, so no strong evidence for collinearity 
 
 # Literature model based on predictors of interest from literature review
 athens_model_lit <- glm(athens.insomnia.scale~time.transplant+BMI+
@@ -589,9 +589,9 @@ summary(athens_model_lit)
 # AIC: 366.51
 # Currently at 5 degrees of freedom, m/15 gives limit of 8 degrees
 
-# Measuring colinearity for literature model
+# Measuring collinearityfor literature model
 vif(athens_model_lit)
-# Nothing above 5, so no strong evidence for colinearity
+# Nothing above 5, so no strong evidence for collinearity 
 
 # Hybridizing model with sample-specific predictors
 # Including significant variables from stepwise approach, doing so because 
@@ -609,9 +609,9 @@ summary(athens_model_hybrid)
 # Using ANOVA to determine if hybrid model is significantly better 
 anova(athens_model_lit, athens_model_hybrid, test = "Chisq")
 
-# Measuring colinearity for hybrid model
+# Measuring collinearityfor hybrid model
 vif(athens_model_hybrid)
-# Nothing above 5, so no strong evidence for colinearity
+# Nothing above 5, so no strong evidence for collinearity 
 
 # --------------------------------------------------------------------------------
 
@@ -645,9 +645,9 @@ summary(berlin_model_full.step.for)
 #'  AIC: 321.41
 #'  Forward stepwise has lower AIC, will prefer using forward stepwise model as compared to backwards 
 
-# Measuring colinearity for hybrid model
+# Measuring collinearityfor hybrid model
 vif(berlin_model_full.step.for)
-# Nothing above 5, so no strong evidence for colinearity
+# Nothing above 5, so no strong evidence for collinearity 
 
 # Literature model based on predictors of interest from literature review
 berlin_model_lit <- glm(berlin.sleep.scale~time.transplant+BMI+
@@ -658,9 +658,9 @@ summary(berlin_model_lit)
 # AIC: 330.01
 # Currently at 5 degrees of freedom, m/15 gives limit of 7 degrees
 
-# Measuring colinearity for hybrid model
+# Measuring collinearityfor hybrid model
 vif(berlin_model_lit)
-# Nothing above 5, so no strong evidence for colinearity
+# Nothing above 5, so no strong evidence for collinearity 
 
 # Hybridizing model with sample-specific predictors
 # Including significant variables from stepwise approach, doing so because 
@@ -676,9 +676,9 @@ summary(berlin_model_hybrid)
 # Using ANOVA to determine if hybrid model is significantly better 
 anova(berlin_model_lit, berlin_model_hybrid, test = "Chisq")
 
-# Measuring colinearity for hybrid model
+# Measuring collinearityfor hybrid model
 vif(berlin_model_hybrid)
-# Nothing above 5, so no strong evidence for colinearity
+# Nothing above 5, so no strong evidence for collinearity 
 
 
 # --------------------------------------------------------------------------------
