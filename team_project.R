@@ -1,6 +1,6 @@
 # BTC1859 Team project
 # Mikael Goutama, Zachery Chan, Mausam Vadakkayil
-# Github Repo: 
+# Github Repo: https://github.com/SirAcia/BTC1859-Midterm.git
 # Code dated to: Aug 9, 2024 
 
 # --------------------------------------------------------------------------------
@@ -100,6 +100,10 @@ glimpse(mydata_raw)
 
 basic_eda(mydata_raw)
 # No zeroes in gender, coded as 1s and 2s 
+
+# Checking for any duplicates 
+duplicated(mydata_raw) 
+# No duplicates 
 
 empty_string(mydata_raw)
 # No blank strings (makes sense as all data is in numeric form), 
